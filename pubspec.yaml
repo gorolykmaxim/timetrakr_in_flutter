@@ -1,0 +1,22 @@
+name: timetrakr_in_flutter
+description: Simple time-tracking android app. You can use it to get more precise work log times in issue trackers such as Jira or Youtrack. Now in Flutter!
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
+dependencies:
+  flutter_repository: ^1.0.0
+  flutter_repository_sqflite: ^1.0.1
+  flutter_event_projections: ^1.2.0
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^0.1.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
