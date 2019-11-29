@@ -127,13 +127,6 @@ class StartedActivitiesListView extends StatelessWidget {
   }
 }
 
-class NoActivitiesPlaceholder extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text('No activities were started today'));
-  }
-}
-
 class StartedActivityListItem extends StatelessWidget {
   final StartedActivity startedActivity;
   final OnActivityChange onProlong, onDelete;
