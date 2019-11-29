@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../common.dart';
+import 'package:intl/intl.dart';
 
 typedef OnStartActivity = void Function(String name, DateTime startDate);
 
@@ -8,8 +7,10 @@ class StartActivityBottomSheetDialog extends StatefulWidget {
   final OnStartActivity onStartActivity;
   final String activityName;
   final BuildContext bottomSheetContext;
+  final DateFormat dateFormat;
 
-  StartActivityBottomSheetDialog({this.onStartActivity, this.activityName, @required this.bottomSheetContext});
+  StartActivityBottomSheetDialog({this.onStartActivity, this.activityName, @required this.bottomSheetContext, DateFormat dateFormat}):
+        this.dateFormat = dateFormat ?? DateFormat();
 
   @override
   State<StatefulWidget> createState() {
@@ -90,7 +91,7 @@ class StartActivityBottomSheetDialogState extends State<StartActivityBottomSheet
                   children: <Widget>[
                     InkWell(
                       child: Text(
-                        'since ${defaultDateFormat.format(startDate)}',
+                        'since ${widget.dateFormat.format(startDate)}',
                         style: TextStyle(color: Colors.grey),
                       ),
                       onTap: () => handleTimeChange(context),

@@ -1,17 +1,18 @@
 import 'package:animated_stream_list/animated_stream_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:intl/intl.dart';
 
 import '../../model.dart';
-import '../common.dart';
 
 typedef OnActivityChange = void Function(StartedActivity startedActivity);
 
 class StartedActivitiesListView extends StatelessWidget {
   final Stream<List<StartedActivity>> startedActivitiesStream;
   final OnActivityChange onProlong, onDelete;
+  final DateFormat dateFormat;
 
-  StartedActivitiesListView({@required this.startedActivitiesStream, @required this.onProlong, @required this.onDelete});
+  StartedActivitiesListView({@required this.startedActivitiesStream, @required this.onProlong, @required this.onDelete, this.dateFormat});
 
   Widget buildItem(StartedActivity activity, int index, BuildContext context, Animation<double> animation) {
     return SizeTransition(
@@ -19,7 +20,8 @@ class StartedActivitiesListView extends StatelessWidget {
       child: StartedActivityListItem(
           startedActivity: activity,
           onProlong: onProlong,
-          onDelete: onDelete
+          onDelete: onDelete,
+          dateFormat: dateFormat,
       ),
     );
   }
@@ -38,10 +40,12 @@ class StartedActivitiesListView extends StatelessWidget {
 }
 
 class StartedActivityListItem extends StatelessWidget {
+  final DateFormat dateFormat;
   final StartedActivity startedActivity;
   final OnActivityChange onProlong, onDelete;
 
-  StartedActivityListItem({@required this.startedActivity, @required this.onProlong, @required this.onDelete});
+  StartedActivityListItem({@required this.startedActivity, @required this.onProlong, @required this.onDelete, DateFormat dateFormat}):
+        this.dateFormat = dateFormat ?? DateFormat();
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +54,7 @@ class StartedActivityListItem extends StatelessWidget {
         color: Colors.white,
         child: ListTile(
           title: Text(startedActivity.name),
-          subtitle: Text('since ${defaultDateFormat.format(startedActivity.startDate)}'),
+          subtitle: Text('since ${dateFormat.format(startedActivity.startDate)}'),
         ),
       ),
       actionPane: SlidableBehindActionPane(),

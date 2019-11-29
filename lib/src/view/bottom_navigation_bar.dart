@@ -1,11 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-
-final defaultDateFormat = DateFormat('HH:mm');
-
-void showError(BuildContext buildContext, Object error) {
-  Scaffold.of(buildContext).showSnackBar(SnackBar(content: Text(error.toString()), duration: Duration(seconds: 3)));
-}
 
 class TimeTrakrBottomNavigationBar extends StatefulWidget {
   final int currentIndex;

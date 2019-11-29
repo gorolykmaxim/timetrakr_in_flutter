@@ -1,9 +1,17 @@
 import 'package:flutter_event_projections/flutter_event_projections.dart';
 import 'package:flutter_repository/flutter_repository.dart';
+import 'package:intl/intl.dart';
 
 import 'persistence.dart';
 
-class ActivityStartException implements Exception {}
+abstract class ActivityStartException implements Exception {
+  String format(DateFormat dateFormat);
+
+  @override
+  String toString() {
+    return format(DateFormat());
+  }
+}
 
 class NewActivityNameIsTooShortException extends ActivityStartException {
   final String name;
@@ -12,7 +20,7 @@ class NewActivityNameIsTooShortException extends ActivityStartException {
   NewActivityNameIsTooShortException(this.name, this.expectedMinimalLength);
 
   @override
-  String toString() {
+  String format(DateFormat dateFormat) {
     return "Activity name '$name' is too short. Use activity name with at least $expectedMinimalLength characters.";
   }
 }
@@ -23,8 +31,8 @@ class StartActivityInFutureException extends ActivityStartException {
   StartActivityInFutureException(this.currentDate, this.specifiedDate);
 
   @override
-  String toString() {
-    return 'Cannot start activity in the future. It is $currentDate right now, and user tried to specify $specifiedDate.';
+  String format(DateFormat dateFormat) {
+    return 'Cannot start activity in the future. It is ${dateFormat.format(currentDate)} right now, and user tried to specify ${dateFormat.format(specifiedDate)}.';
   }
 }
 
@@ -34,8 +42,8 @@ class AnotherActivityAlreadyStartedException extends ActivityStartException {
   AnotherActivityAlreadyStartedException(this.anotherActivity);
 
   @override
-  String toString() {
-    return '${anotherActivity.name} has already been started at ${anotherActivity.startDate}.';
+  String format(DateFormat dateFormat) {
+    return '${anotherActivity.name} has already been started at ${dateFormat.format(anotherActivity.startDate)}.';
   }
 }
 

@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:timetrakr_in_flutter/src/view/common.dart';
+import 'package:intl/intl.dart';
 
 import '../model.dart';
 import '../query.dart';
 import 'activity/button.dart';
 import 'activity/view.dart';
+import 'bottom_navigation_bar.dart';
 
 class TimeTrakrApp extends StatefulWidget {
   final ActivityBoundedContext boundedContext;
   final ProjectionFactory projectionFactory;
+  final DateFormat dateFormat = DateFormat("HH:mm");
 
   TimeTrakrApp(this.boundedContext, this.projectionFactory);
 
@@ -29,7 +31,8 @@ class TimeTrakrAppState extends State<TimeTrakrApp> {
       StartedActivitiesView(
           widget.boundedContext,
           widget.projectionFactory,
-          controller: controller
+          controller: controller,
+          dateFormat: widget.dateFormat,
       ),
       SizedBox.shrink()
     ];
