@@ -1,3 +1,4 @@
+import 'package:animated_stream_list/animated_stream_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_event_projections/flutter_event_projections.dart';
 import 'package:flutter_repository/flutter_repository.dart';
@@ -57,13 +58,10 @@ class StartedActivitiesViewState extends State<StartedActivitiesView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: StreamBuilder<List<StartedActivity>>(
-          stream: todaysActivitiesProjection.stream,
-          builder: makeBuilder((activities) => StartedActivitiesListView(
-              startedActivities: activities,
-              onProlong: (activity, context) => handleActivityStartRequest(context, activityName: activity.name),
-              onDelete: (activity, context) => handleActivityDelete(activity, context),
-          ))
+      body: StartedActivitiesListView(
+          startedActivitiesStream: todaysActivitiesProjection.stream,
+          onProlong: (activity, context) => handleActivityStartRequest(context, activityName: activity.name),
+          onDelete: (activity, context) => handleActivityDelete(activity, context)
       ),
       floatingActionButton: StartActivityFloatingButton(onPressed: (context) {
         handleActivityStartRequest(context);
@@ -100,22 +98,30 @@ class StartedActivitiesViewState extends State<StartedActivitiesView> {
 typedef OnActivityChange = void Function(StartedActivity startedActivity, BuildContext buildContext);
 
 class StartedActivitiesListView extends StatelessWidget {
-  final List<StartedActivity> startedActivities;
+  final Stream<List<StartedActivity>> startedActivitiesStream;
   final OnActivityChange onProlong, onDelete;
 
-  StartedActivitiesListView({@required this.startedActivities, @required this.onProlong, @required this.onDelete});
+  StartedActivitiesListView({@required this.startedActivitiesStream, @required this.onProlong, @required this.onDelete});
+
+  Widget buildItem(StartedActivity activity, int index, BuildContext context, Animation<double> animation) {
+    return SizeTransition(
+      sizeFactor: animation,
+      child: StartedActivityListItem(
+          startedActivity: activity,
+          onProlong: onProlong,
+          onDelete: onDelete
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
         color: Colors.grey.shade200,
-        child: ListViewWithPlaceholder(
-            children: startedActivities.map((a) => StartedActivityListItem(
-                startedActivity: a,
-                onProlong: onProlong,
-                onDelete: onDelete
-            )).toList(),
-            listPlaceholder: NoActivitiesPlaceholder()
+        child: AnimatedStreamList(
+            streamList: startedActivitiesStream,
+            itemBuilder: buildItem,
+            itemRemovedBuilder: buildItem
         )
     );
   }
