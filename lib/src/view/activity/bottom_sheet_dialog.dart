@@ -56,13 +56,15 @@ class StartActivityBottomSheetDialogState extends State<StartActivityBottomSheet
         }
     );
     if (time != null) {
-      startDate = DateTime(
-          startDate.year,
-          startDate.month,
-          startDate.day,
-          time.hour,
-          time.minute
-      );
+      setState(() {
+        startDate = DateTime(
+            startDate.year,
+            startDate.month,
+            startDate.day,
+            time.hour,
+            time.minute
+        );
+      });
     }
   }
 
