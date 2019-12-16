@@ -16,7 +16,7 @@ class _HourAndMinutesDurationFormatter implements DurationFormatter {
     int minutes = duration.inMinutes % Duration.minutesPerHour;
     // Round amount of minutes to the higher value to represent the seconds,
     // that are a remainder.
-    if (duration.inSeconds % Duration.secondsPerHour > 0) {
+    if (duration.inSeconds - duration.inMinutes * Duration.secondsPerMinute > 0) {
       minutes++;
     }
     if (hours == 0 || minutes > 0) {
