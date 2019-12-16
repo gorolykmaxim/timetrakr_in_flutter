@@ -15,7 +15,7 @@ void main() async {
   final events = ObservableEventStream(controller);
   final activityPersistence = ActivityPersistence();
   final builder = SqfliteDatabaseBuilder();
-  var version = Version(1);
+  final version = Version(1);
   builder.version = version;
   builder.instructions(MigrationInstructions(version, activityPersistence.getMigrationScriptsFor(version)));
   final database = await builder.build();

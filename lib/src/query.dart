@@ -23,6 +23,23 @@ class FindActivitiesStartedToday implements Query<Specification, List<StartedAct
   }
 }
 
+class GetTodaysActivitiesDurationReport implements Query<Specification, ActivitiesDurationReport> {
+  final FindActivitiesStartedToday _findActivitiesStartedToday;
+
+  GetTodaysActivitiesDurationReport(ImmutableCollection<StartedActivity> startedActivities): _findActivitiesStartedToday = FindActivitiesStartedToday(startedActivities);
+
+  @override
+  Future<ActivitiesDurationReport> execute() async {
+    List<StartedActivity> startedActivities = await _findActivitiesStartedToday.execute();
+    return ActivitiesDurationReport.fromActivitiesInChronologicalOrder(startedActivities);
+  }
+
+  @override
+  Future<ActivitiesDurationReport> executeOn(Event<Specification> event) {
+    return execute();
+  }
+}
+
 class ProjectionFactory {
   final ImmutableCollection<StartedActivity> _startedActivities;
   final ObservableEventStream<Specification> _eventStream;
@@ -31,6 +48,13 @@ class ProjectionFactory {
 
   Projection<Specification, List<StartedActivity>> findActivitiesStartedToday() {
     final query = FindActivitiesStartedToday(_startedActivities);
+    final projection = Projection(query, [ActivityStarted.type, ActivityRemoved.type]);
+    projection.start(_eventStream.stream);
+    return projection;
+  }
+
+  Projection<Specification, ActivitiesDurationReport> getTodaysActivitiesDurationReport() {
+    final query = GetTodaysActivitiesDurationReport(_startedActivities);
     final projection = Projection(query, [ActivityStarted.type, ActivityRemoved.type]);
     projection.start(_eventStream.stream);
     return projection;

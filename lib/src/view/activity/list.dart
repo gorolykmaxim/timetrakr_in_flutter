@@ -2,6 +2,7 @@ import 'package:animated_stream_list/animated_stream_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
+import 'package:timetrakr_in_flutter/src/view/emptiable_list.dart';
 
 import '../../model.dart';
 
@@ -11,10 +12,11 @@ class StartedActivitiesListView extends StatelessWidget {
   final Stream<List<StartedActivity>> startedActivitiesStream;
   final OnActivityChange onProlong, onDelete;
   final DateFormat dateFormat;
+  final SlidableController slidableController = SlidableController();
 
   StartedActivitiesListView({@required this.startedActivitiesStream, @required this.onProlong, @required this.onDelete, this.dateFormat});
 
-  Widget buildItem(StartedActivity activity, int index, BuildContext context, Animation<double> animation) {
+  Widget _buildItem(StartedActivity activity, int index, BuildContext context, Animation<double> animation) {
     return SizeTransition(
       sizeFactor: animation,
       child: StartedActivityListItem(
@@ -22,18 +24,35 @@ class StartedActivitiesListView extends StatelessWidget {
           onProlong: onProlong,
           onDelete: onDelete,
           dateFormat: dateFormat,
+          controller: slidableController,
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        color: Colors.grey.shade200,
-        child: AnimatedStreamList(
-            streamList: startedActivitiesStream,
-            itemBuilder: buildItem,
-            itemRemovedBuilder: buildItem
+    return ListThatCanBeEmpty(
+        listStream: startedActivitiesStream,
+        list: Card(
+          child: AnimatedStreamList(
+              shrinkWrap: true,
+              streamList: startedActivitiesStream,
+              itemBuilder: _buildItem,
+              itemRemovedBuilder: _buildItem
+          )
+        ),
+        placeholder: NoStartedActivities());
+  }
+}
+
+class NoStartedActivities extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+        child: Text(
+            'To start a new activity, press that green button down below',
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.headline
         )
     );
   }
@@ -43,15 +62,16 @@ class StartedActivityListItem extends StatelessWidget {
   final DateFormat dateFormat;
   final StartedActivity startedActivity;
   final OnActivityChange onProlong, onDelete;
+  final SlidableController controller;
 
-  StartedActivityListItem({@required this.startedActivity, @required this.onProlong, @required this.onDelete, DateFormat dateFormat}):
+  StartedActivityListItem({@required this.startedActivity, @required this.onProlong, @required this.onDelete, DateFormat dateFormat, this.controller}):
         this.dateFormat = dateFormat ?? DateFormat();
 
   @override
   Widget build(BuildContext context) {
     return Slidable(
-      child: Container(
-        color: Colors.white,
+      controller: controller,
+      child: Material(
         child: ListTile(
           title: Text(startedActivity.name),
           subtitle: Text('since ${dateFormat.format(startedActivity.startDate)}'),

@@ -1,27 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:timetrakr_in_flutter/src/duration.dart';
 
 import '../model.dart';
 import '../query.dart';
 import 'activity/button.dart';
 import 'activity/view.dart';
 import 'bottom_navigation_bar.dart';
+import 'report/view.dart';
 
 class TimeTrakrApp extends StatefulWidget {
   final ActivityBoundedContext boundedContext;
   final ProjectionFactory projectionFactory;
   final DateFormat dateFormat = DateFormat("HH:mm");
+  final DurationFormatter durationFormatter = DurationFormatter.hoursAndMinutes();
 
   TimeTrakrApp(this.boundedContext, this.projectionFactory);
 
   @override
   State<StatefulWidget> createState() {
-    return TimeTrakrAppState();
+    return _TimeTrakrAppState();
   }
 }
 
-class TimeTrakrAppState extends State<TimeTrakrApp> {
-  int _currentViewIndex = 0;
+class _TimeTrakrAppState extends State<TimeTrakrApp> {
+  int currentViewIndex = 0;
   List<Widget> views;
   final StartedActivitiesViewController controller = StartedActivitiesViewController();
 
@@ -34,20 +37,23 @@ class TimeTrakrAppState extends State<TimeTrakrApp> {
           controller: controller,
           dateFormat: widget.dateFormat,
       ),
-      SizedBox.shrink()
+      ActivitiesReportView(
+          projectionFactory: widget.projectionFactory,
+          durationFormatter: widget.durationFormatter
+      )
     ];
   }
 
-  void changeCurrentView(int newViewIndex) {
+  void _changeCurrentView(int newViewIndex) {
     setState(() {
-      _currentViewIndex = newViewIndex;
+      currentViewIndex = newViewIndex;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     Widget floatingActionButton;
-    if (_currentViewIndex == 0) {
+    if (currentViewIndex == 0) {
       floatingActionButton = StartActivityFloatingButton(
         onPressed: controller.requestNewActivityStart,
       );
@@ -62,11 +68,12 @@ class TimeTrakrAppState extends State<TimeTrakrApp> {
           )
       ),
       home: Scaffold(
-        body: IndexedStack(children: views, index: _currentViewIndex),
+        backgroundColor: Colors.grey.shade200,
+        body: IndexedStack(children: views, index: currentViewIndex),
         floatingActionButton: floatingActionButton,
         bottomNavigationBar: TimeTrakrBottomNavigationBar(
-          currentIndex: _currentViewIndex,
-          onCurrentViewChange: changeCurrentView,
+          currentIndex: currentViewIndex,
+          onCurrentViewChange: _changeCurrentView,
         ),
       ),
     );

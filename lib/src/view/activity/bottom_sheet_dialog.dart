@@ -14,11 +14,11 @@ class StartActivityBottomSheetDialog extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return StartActivityBottomSheetDialogState();
+    return _StartActivityBottomSheetDialogState();
   }
 }
 
-class StartActivityBottomSheetDialogState extends State<StartActivityBottomSheetDialog> {
+class _StartActivityBottomSheetDialogState extends State<StartActivityBottomSheetDialog> {
   final double padding = 15;
   String activityName;
   DateTime startDate;
@@ -32,18 +32,18 @@ class StartActivityBottomSheetDialogState extends State<StartActivityBottomSheet
     startDate = DateTime.now();
   }
 
-  void startActivity() {
+  void _startActivity() {
     if (widget.onStartActivity != null && activityName.isNotEmpty) {
       Navigator.pop(widget.bottomSheetContext);
       widget.onStartActivity(activityName, startDate);
     }
   }
 
-  void setActivityName(String name) {
+  void _setActivityName(String name) {
     activityName = name;
   }
 
-  Future<void> handleTimeChange(BuildContext context) async {
+  Future<void> _handleTimeChange(BuildContext context) async {
     var time = TimeOfDay.fromDateTime(startDate);
     time = await showTimePicker(
         context: context,
@@ -85,8 +85,8 @@ class StartActivityBottomSheetDialogState extends State<StartActivityBottomSheet
                 decoration: InputDecoration.collapsed(
                     hintText: 'What task are you working on?'
                 ),
-                onChanged: setActivityName,
-                onSubmitted: (_) => startActivity(),
+                onChanged: _setActivityName,
+                onSubmitted: (_) => _startActivity(),
               ),
               Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -96,10 +96,10 @@ class StartActivityBottomSheetDialogState extends State<StartActivityBottomSheet
                         'since ${widget.dateFormat.format(startDate)}',
                         style: TextStyle(color: Colors.grey),
                       ),
-                      onTap: () => handleTimeChange(context),
+                      onTap: () => _handleTimeChange(context),
                     ),
                     RaisedButton(
-                        onPressed: startActivity,
+                        onPressed: _startActivity,
                         child: Text('START')
                     )
                   ]

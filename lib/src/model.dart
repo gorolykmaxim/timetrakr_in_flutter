@@ -67,6 +67,8 @@ class StartedActivity {
     return StartedActivity(name, startDate);
   }
 
+  ActivityDuration getDurationBeforeEndingAt(DateTime endDate) => ActivityDuration(name, endDate.difference(startDate));
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -115,5 +117,77 @@ class ActivityBoundedContext {
   Future<void> removeActivity(StartedActivity activity) async {
     await _startedActivities.removeOne(activity);
     _events.publish(ActivityRemoved());
+  }
+}
+
+class ActivityDuration {
+  final String activityName;
+  final Duration duration;
+
+  ActivityDuration(this.activityName, this.duration);
+
+  ActivityDuration prolongBy(Duration duration) => ActivityDuration(activityName, this.duration + duration);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is ActivityDuration &&
+              runtimeType == other.runtimeType &&
+              activityName == other.activityName &&
+              duration == other.duration;
+
+  @override
+  int get hashCode =>
+      activityName.hashCode ^
+      duration.hashCode;
+
+  @override
+  String toString() {
+    return 'ActivityDuration{activityName: $activityName, duration: $duration}';
+  }
+}
+
+class ActivitiesDurationReport {
+  final List<StartedActivity> _startedActivities;
+
+  ActivitiesDurationReport.fromActivitiesInChronologicalOrder(this._startedActivities);
+
+  Iterable<ActivityDuration> get activityDurations {
+    final activitiesFound = Set<String>();
+    final activityNameToDuration = <String, ActivityDuration>{};
+    for (var i = 0; i < _startedActivities.length; i++) {
+      final activity = _startedActivities[i];
+      activitiesFound.add(activity.name);
+      StartedActivity nextActivity;
+      if (i + 1 < _startedActivities.length) {
+        nextActivity = _startedActivities[i + 1];
+      } else {
+        nextActivity = StartedActivity.create(activitiesFound.toString());
+      }
+      final activityDuration = activity.getDurationBeforeEndingAt(nextActivity.startDate);
+      var existingActivityDuration = activityNameToDuration[activity.name];
+      if (existingActivityDuration == null) {
+        existingActivityDuration = activityDuration;
+      } else {
+        existingActivityDuration = existingActivityDuration.prolongBy(activityDuration.duration);
+      }
+      activityNameToDuration[activity.name] = existingActivityDuration;
+    }
+    return activityNameToDuration.values;
+  }
+
+  Iterable<ActivityDuration> get _accountableActivityDurations => activityDurations.where((a) => a.duration.inMinutes > 1);
+
+  bool get isEmpty => _accountableActivityDurations.isEmpty;
+
+  Duration totalDurationOf(Iterable<String> activities) {
+    final durations = _accountableActivityDurations
+        .where((ad) => activities.contains(ad.activityName))
+        .map((ad) => ad.duration);
+    if (durations.isEmpty) {
+      return Duration.zero;
+    } else {
+      return durations.reduce((total, duration) => total + duration);
+    }
   }
 }

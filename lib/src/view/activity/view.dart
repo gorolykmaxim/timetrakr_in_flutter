@@ -30,35 +30,35 @@ class StartedActivitiesView extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return StartedActivitiesViewState();
+    return _StartedActivitiesViewState();
   }
 }
 
-class StartedActivitiesViewState extends State<StartedActivitiesView> {
+class _StartedActivitiesViewState extends State<StartedActivitiesView> {
   Projection<Specification, List<StartedActivity>> todaysActivitiesProjection;
 
-  Future<void> handleActivityStart(String name, DateTime startDate, BuildContext context) async {
+  Future<void> _handleActivityStart(String name, DateTime startDate, BuildContext context) async {
     try {
       await widget.boundedContext.startNewActivity(name, startDate);
     } on ActivityStartException catch (e) {
-      showError(context, e.format(widget.dateFormat));
+      Scaffold.of(context).showSnackBar(ErrorSnackBar(error: e.format(widget.dateFormat)));
     }
   }
 
-  Future<void> handleActivityDelete(StartedActivity startedActivity, BuildContext context) async {
+  Future<void> _handleActivityDelete(StartedActivity startedActivity, BuildContext context) async {
     try {
       await widget.boundedContext.removeActivity(startedActivity);
     } on ActivityStartException catch (e) {
-      showError(context, e.format(widget.dateFormat));
+      Scaffold.of(context).showSnackBar(ErrorSnackBar(error: e.format(widget.dateFormat)));
     }
   }
 
-  void handleActivityStartRequest(BuildContext context, {String activityName}) {
+  void _handleActivityStartRequest(BuildContext context, {String activityName}) {
     showModalBottomSheet(
         isScrollControlled: true,
         context: context,
         builder: (bottomSheetContext) => StartActivityBottomSheetDialog(
-          onStartActivity: (String name, DateTime startDate) => handleActivityStart(name, startDate, context),
+          onStartActivity: (String name, DateTime startDate) => _handleActivityStart(name, startDate, context),
           bottomSheetContext: bottomSheetContext,
           activityName: activityName,
           dateFormat: widget.dateFormat,
@@ -70,7 +70,7 @@ class StartedActivitiesViewState extends State<StartedActivitiesView> {
   void initState() {
     super.initState();
     todaysActivitiesProjection = widget.projectionFactory.findActivitiesStartedToday();
-    widget.controller.onRequestNewActivityStart = handleActivityStartRequest;
+    widget.controller.onRequestNewActivityStart = _handleActivityStartRequest;
   }
 
   @override
@@ -83,8 +83,8 @@ class StartedActivitiesViewState extends State<StartedActivitiesView> {
   Widget build(BuildContext context) {
     return StartedActivitiesListView(
         startedActivitiesStream: todaysActivitiesProjection.stream,
-        onProlong: (activity) => handleActivityStartRequest(context, activityName: activity.name),
-        onDelete: (activity) => handleActivityDelete(activity, context),
+        onProlong: (activity) => _handleActivityStartRequest(context, activityName: activity.name),
+        onDelete: (activity) => _handleActivityDelete(activity, context),
         dateFormat: widget.dateFormat,
     );
   }

@@ -8,16 +8,16 @@ class TimeTrakrBottomNavigationBar extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return TimeTrakrBottomNavigationBarState(currentIndex);
+    return _TimeTrakrBottomNavigationBarState(currentIndex);
   }
 }
 
-class TimeTrakrBottomNavigationBarState extends State<TimeTrakrBottomNavigationBar> {
+class _TimeTrakrBottomNavigationBarState extends State<TimeTrakrBottomNavigationBar> {
   int currentIndex;
 
-  TimeTrakrBottomNavigationBarState(this.currentIndex);
+  _TimeTrakrBottomNavigationBarState(this.currentIndex);
 
-  void setCurrentIndex(int index) {
+  void _setCurrentIndex(int index) {
     final indexChanged = currentIndex != index;
     setState(() {
       currentIndex = index;
@@ -31,7 +31,7 @@ class TimeTrakrBottomNavigationBarState extends State<TimeTrakrBottomNavigationB
   Widget build(BuildContext context) {
     return BottomNavigationBar(
         currentIndex: currentIndex,
-        onTap: setCurrentIndex,
+        onTap: _setCurrentIndex,
         items: [
           BottomNavigationBarItem(
               icon: Icon(Icons.list),

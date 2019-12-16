@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
-void showError(BuildContext buildContext, String error) {
-  Scaffold.of(buildContext).showSnackBar(SnackBar(content: Text(error), duration: Duration(seconds: 5)));
+class ErrorSnackBar extends SnackBar {
+  ErrorSnackBar({@required Object error, Duration duration = const Duration(seconds: 5)}):
+      super(content: Text(error), duration: duration);
 }
