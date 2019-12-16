@@ -13,6 +13,21 @@ abstract class ActivityStartException implements Exception {
   }
 }
 
+class ActivityStartModificationException extends ActivityStartException {
+  final String name;
+  final DateTime startDate;
+  final String operation;
+  final Object cause;
+
+  ActivityStartModificationException.create(this.name, this.startDate, this.cause): operation = 'start activity';
+  ActivityStartModificationException.remove(this.name, this.startDate, this.cause): operation = 'remove start of activity';
+
+  @override
+  String format(DateFormat dateFormat) {
+    return "Failed to $operation '$name' at ${dateFormat.format(startDate)}. Reason: $cause";
+  }
+}
+
 class NewActivityNameIsTooShortException extends ActivityStartException {
   final String name;
   final int expectedMinimalLength;
@@ -105,18 +120,26 @@ class ActivityBoundedContext {
   ActivityBoundedContext(this._startedActivities, this._events);
 
   Future<void> startNewActivity(String activityName, DateTime startDate) async {
-    final activitiesStartedAtThisTime = ActivitySpecification.startedAt(startDate);
-    final activities = await _startedActivities.findAll(activitiesStartedAtThisTime);
-    if (activities.isNotEmpty) {
-      throw AnotherActivityAlreadyStartedException(activities[0]);
+    try {
+      final activitiesStartedAtThisTime = ActivitySpecification.startedAt(startDate);
+      final activities = await _startedActivities.findAll(activitiesStartedAtThisTime);
+      if (activities.isNotEmpty) {
+        throw AnotherActivityAlreadyStartedException(activities[0]);
+      }
+      await _startedActivities.add(StartedActivity.create(activityName, startDate: startDate));
+      _events.publish(ActivityStarted());
+    } on CollectionException catch (e) {
+      throw ActivityStartModificationException.create(activityName, startDate, e);
     }
-    await _startedActivities.add(StartedActivity.create(activityName, startDate: startDate));
-    _events.publish(ActivityStarted());
   }
 
   Future<void> removeActivity(StartedActivity activity) async {
-    await _startedActivities.removeOne(activity);
-    _events.publish(ActivityRemoved());
+    try {
+      await _startedActivities.removeOne(activity);
+      _events.publish(ActivityRemoved());
+    } on CollectionException catch (e) {
+      throw ActivityStartModificationException.remove(activity.name, activity.startDate, e);
+    }
   }
 }
 
@@ -152,7 +175,7 @@ class ActivitiesDurationReport {
 
   ActivitiesDurationReport.fromActivitiesInChronologicalOrder(this._startedActivities);
 
-  Iterable<ActivityDuration> get activityDurations {
+  Iterable<ActivityDuration> get _activityDurations {
     final activitiesFound = Set<String>();
     final activityNameToDuration = <String, ActivityDuration>{};
     for (var i = 0; i < _startedActivities.length; i++) {
@@ -176,12 +199,12 @@ class ActivitiesDurationReport {
     return activityNameToDuration.values;
   }
 
-  Iterable<ActivityDuration> get _accountableActivityDurations => activityDurations.where((a) => a.duration.inMinutes > 1);
+  Iterable<ActivityDuration> get activityDurations => _activityDurations.where((a) => a.duration.inMinutes > 1);
 
-  bool get isEmpty => _accountableActivityDurations.isEmpty;
+  bool get isEmpty => activityDurations.isEmpty;
 
   Duration totalDurationOf(Iterable<String> activities) {
-    final durations = _accountableActivityDurations
+    final durations = activityDurations
         .where((ad) => activities.contains(ad.activityName))
         .map((ad) => ad.duration);
     if (durations.isEmpty) {
