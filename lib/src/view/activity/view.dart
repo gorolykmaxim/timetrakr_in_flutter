@@ -81,11 +81,13 @@ class _StartedActivitiesViewState extends State<StartedActivitiesView> {
 
   @override
   Widget build(BuildContext context) {
-    return StartedActivitiesListView(
-        startedActivitiesStream: todaysActivitiesProjection.stream,
-        onProlong: (activity) => _handleActivityStartRequest(context, activityName: activity.name),
-        onDelete: (activity) => _handleActivityDelete(activity, context),
-        dateFormat: widget.dateFormat,
+    return SafeArea(
+        child: StartedActivitiesListView(
+          startedActivitiesStream: todaysActivitiesProjection.stream,
+          onProlong: (activity) => _handleActivityStartRequest(context, activityName: activity.name),
+          onDelete: (activity) => _handleActivityDelete(activity, context),
+          dateFormat: widget.dateFormat,
+        )
     );
   }
 }

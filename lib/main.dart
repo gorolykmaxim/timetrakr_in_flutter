@@ -11,6 +11,7 @@ import 'src/query.dart';
 import 'src/view/app.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   final controller = StreamController<Event<Specification>>.broadcast();
   final events = ObservableEventStream(controller);
   final activityPersistence = ActivityPersistence();
