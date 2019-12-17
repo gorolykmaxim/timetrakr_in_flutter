@@ -4,4 +4,4 @@ import 'package:mockito/mockito.dart';
 
 class SimpleCollectionMock<T> extends Mock implements SimpleCollection<T> {}
 
-class EventStreamMock<T> extends Mock implements EventStream<T> {}
+class ObservableEventStreamMock<T> extends Mock implements ObservableEventStream<T> {}

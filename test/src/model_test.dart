@@ -16,7 +16,7 @@ void main() {
     ActivityBoundedContext context;
     setUp(() {
       startedActivities = SimpleCollectionMock();
-      events = EventStreamMock();
+      events = ObservableEventStreamMock();
       when(startedActivities.findAll(ActivitySpecification.startedAt(startDate)))
           .thenAnswer((_) => Future.value(<StartedActivity>[]));
       context = ActivityBoundedContext(startedActivities, events);
