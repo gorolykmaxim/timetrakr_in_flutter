@@ -7,8 +7,6 @@ import 'package:timetrakr_in_flutter/src/persistence.dart';
 
 import 'common.dart';
 
-class EventStreamMock<T> extends Mock implements EventStream<T> {}
-
 void main() {
   group('ActivityBoundedContext', () {
     Collection<StartedActivity> startedActivities;
