@@ -1,8 +1,11 @@
 import 'package:flutter_event_projections/flutter_event_projections.dart';
 import 'package:flutter_repository/flutter_repository.dart';
 import 'package:intl/intl.dart';
+import 'package:collection/collection.dart';
 
 import 'persistence.dart';
+
+const _iterableEquals = const IterableEquality();
 
 abstract class ActivityStartException implements Exception {
   String format(DateFormat dateFormat);
@@ -213,4 +216,14 @@ class ActivitiesDurationReport {
       return durations.reduce((total, duration) => total + duration);
     }
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is ActivitiesDurationReport &&
+              runtimeType == other.runtimeType &&
+              _iterableEquals.equals(_startedActivities, other._startedActivities);
+
+  @override
+  int get hashCode => _startedActivities.hashCode;
 }

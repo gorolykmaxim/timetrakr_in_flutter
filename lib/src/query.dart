@@ -4,10 +4,10 @@ import 'package:flutter_repository/flutter_repository.dart';
 import 'model.dart';
 import 'persistence.dart';
 
-class FindActivitiesStartedToday implements Query<Specification, List<StartedActivity>> {
+class _FindActivitiesStartedToday implements Query<Specification, List<StartedActivity>> {
   final ImmutableCollection<StartedActivity> _startedActivities;
 
-  FindActivitiesStartedToday(this._startedActivities);
+  _FindActivitiesStartedToday(this._startedActivities);
 
   @override
   Future<List<StartedActivity>> execute() {
@@ -23,10 +23,10 @@ class FindActivitiesStartedToday implements Query<Specification, List<StartedAct
   }
 }
 
-class GetTodaysActivitiesDurationReport implements Query<Specification, ActivitiesDurationReport> {
-  final FindActivitiesStartedToday _findActivitiesStartedToday;
+class _GetTodaysActivitiesDurationReport implements Query<Specification, ActivitiesDurationReport> {
+  final _FindActivitiesStartedToday _findActivitiesStartedToday;
 
-  GetTodaysActivitiesDurationReport(ImmutableCollection<StartedActivity> startedActivities): _findActivitiesStartedToday = FindActivitiesStartedToday(startedActivities);
+  _GetTodaysActivitiesDurationReport(ImmutableCollection<StartedActivity> startedActivities): _findActivitiesStartedToday = _FindActivitiesStartedToday(startedActivities);
 
   @override
   Future<ActivitiesDurationReport> execute() async {
@@ -47,14 +47,14 @@ class ProjectionFactory {
   ProjectionFactory(this._startedActivities, this._eventStream);
 
   Projection<Specification, List<StartedActivity>> findActivitiesStartedToday() {
-    final query = FindActivitiesStartedToday(_startedActivities);
+    final query = _FindActivitiesStartedToday(_startedActivities);
     final projection = Projection(query, [ActivityStarted.type, ActivityRemoved.type]);
     projection.start(_eventStream.stream);
     return projection;
   }
 
   Projection<Specification, ActivitiesDurationReport> getTodaysActivitiesDurationReport() {
-    final query = GetTodaysActivitiesDurationReport(_startedActivities);
+    final query = _GetTodaysActivitiesDurationReport(_startedActivities);
     final projection = Projection(query, [ActivityStarted.type, ActivityRemoved.type]);
     projection.start(_eventStream.stream);
     return projection;
