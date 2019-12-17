@@ -5,7 +5,8 @@ import 'package:mockito/mockito.dart';
 import 'package:timetrakr_in_flutter/src/model.dart';
 import 'package:timetrakr_in_flutter/src/persistence.dart';
 
-class SimpleCollectionMock<T> extends Mock implements SimpleCollection<T> {}
+import 'common.dart';
+
 class EventStreamMock<T> extends Mock implements EventStream<T> {}
 
 void main() {
