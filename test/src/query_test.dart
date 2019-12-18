@@ -46,7 +46,7 @@ void main() {
     test('finds all activities started today after an activity start', () {
       // when
       final projection = factory.findActivitiesStartedToday();
-      observableEventStream.publish(ActivityStarted());
+      observableEventStream.publish(ActivityStartedEvent());
       // then
       expect(projection.stream, emitsInOrder([
         expectedActivities,
@@ -56,7 +56,7 @@ void main() {
     test('finds all activities started today after an activity removal', () {
       // when
       final projection = factory.findActivitiesStartedToday();
-      observableEventStream.publish(ActivityRemoved());
+      observableEventStream.publish(ActivityRemovedEvent());
       // then
       expect(projection.stream, emitsInOrder([
         expectedActivities,
@@ -74,7 +74,7 @@ void main() {
     test("gets today's activities duration report after an activity start", () {
       // when
       final projection = factory.getTodaysActivitiesDurationReport();
-      observableEventStream.publish(ActivityStarted());
+      observableEventStream.publish(ActivityStartedEvent());
       // then
       expect(projection.stream, emitsInOrder([
         expectedReport,
@@ -84,7 +84,7 @@ void main() {
     test("gets today's activities duration report after an activity removal", () {
       // when
       final projection = factory.getTodaysActivitiesDurationReport();
-      observableEventStream.publish(ActivityRemoved());
+      observableEventStream.publish(ActivityRemovedEvent());
       // then
       expect(projection.stream, emitsInOrder([
         expectedReport,

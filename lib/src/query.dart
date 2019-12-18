@@ -48,14 +48,14 @@ class ProjectionFactory {
 
   Projection<Specification, List<StartedActivity>> findActivitiesStartedToday() {
     final query = _FindActivitiesStartedToday(_startedActivities);
-    final projection = Projection(query, [ActivityStarted.type, ActivityRemoved.type]);
+    final projection = Projection(query, [ActivityStartedEvent.type, ActivityRemovedEvent.type]);
     projection.start(_eventStream.stream);
     return projection;
   }
 
   Projection<Specification, ActivitiesDurationReport> getTodaysActivitiesDurationReport() {
     final query = _GetTodaysActivitiesDurationReport(_startedActivities);
-    final projection = Projection(query, [ActivityStarted.type, ActivityRemoved.type]);
+    final projection = Projection(query, [ActivityStartedEvent.type, ActivityRemovedEvent.type]);
     projection.start(_eventStream.stream);
     return projection;
   }

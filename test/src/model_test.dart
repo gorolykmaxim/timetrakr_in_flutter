@@ -52,7 +52,7 @@ void main() {
       await context.startNewActivity(activityName, startDate);
       // then
       verify(startedActivities.add(StartedActivity(activityName, startDate))).called(1);
-      verify(events.publish(ActivityStarted())).called(1);
+      verify(events.publish(ActivityStartedEvent())).called(1);
     });
     test('fails to remove activity start event', () {
       // given
@@ -69,7 +69,7 @@ void main() {
       await context.removeActivity(activityStart);
       // then
       verify(startedActivities.removeOne(activityStart)).called(1);
-      verify(events.publish(ActivityRemoved())).called(1);
+      verify(events.publish(ActivityRemovedEvent())).called(1);
     });
   });
   group('ActivitiesDurationReport', () {

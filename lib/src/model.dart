@@ -106,14 +106,14 @@ class StartedActivity {
   }
 }
 
-class ActivityStarted extends Event<Specification> {
+class ActivityStartedEvent extends Event<Specification> {
   static final type = 'An activity has been started';
-  ActivityStarted() : super(type, {});
+  ActivityStartedEvent() : super(type, {});
 }
 
-class ActivityRemoved extends Event<Specification> {
+class ActivityRemovedEvent extends Event<Specification> {
   static final type = 'An activity start event has been removed';
-  ActivityRemoved(): super(type, {});
+  ActivityRemovedEvent(): super(type, {});
 }
 
 class ActivityBoundedContext {
@@ -130,7 +130,7 @@ class ActivityBoundedContext {
         throw AnotherActivityAlreadyStartedException(activities[0]);
       }
       await _startedActivities.add(StartedActivity.create(activityName, startDate: startDate));
-      _events.publish(ActivityStarted());
+      _events.publish(ActivityStartedEvent());
     } on CollectionException catch (e) {
       throw ActivityStartModificationException.create(activityName, startDate, e);
     }
@@ -139,7 +139,7 @@ class ActivityBoundedContext {
   Future<void> removeActivity(StartedActivity activity) async {
     try {
       await _startedActivities.removeOne(activity);
-      _events.publish(ActivityRemoved());
+      _events.publish(ActivityRemovedEvent());
     } on CollectionException catch (e) {
       throw ActivityStartModificationException.remove(activity.name, activity.startDate, e);
     }
