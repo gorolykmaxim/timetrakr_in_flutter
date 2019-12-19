@@ -1,3 +1,4 @@
+import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_event_projections/flutter_event_projections.dart';
 import 'package:flutter_repository/flutter_repository.dart';
@@ -24,8 +25,9 @@ class StartedActivitiesView extends StatefulWidget {
   final ProjectionFactory projectionFactory;
   final StartedActivitiesViewController controller;
   final DateFormat dateFormat;
+  final Clock clock;
 
-  StartedActivitiesView(this.boundedContext, this.projectionFactory, {this.dateFormat, StartedActivitiesViewController controller}):
+  StartedActivitiesView({@required this.boundedContext, @required this.projectionFactory, @required this.clock, this.dateFormat, StartedActivitiesViewController controller}):
         this.controller = controller ?? StartedActivitiesViewController();
 
   @override
@@ -62,6 +64,7 @@ class _StartedActivitiesViewState extends State<StartedActivitiesView> {
           bottomSheetContext: bottomSheetContext,
           activityName: activityName,
           dateFormat: widget.dateFormat,
+          startDate: widget.clock.now(),
         )
     );
   }

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_event_projections/flutter_event_projections.dart';
 import 'package:flutter_repository/flutter_repository.dart';
@@ -15,8 +16,9 @@ import 'selected_duration.dart';
 class ActivitiesReportView extends StatefulWidget {
   final ProjectionFactory projectionFactory;
   final DurationFormatter durationFormatter;
+  final Clock clock;
 
-  ActivitiesReportView({@required this.projectionFactory, this.durationFormatter});
+  ActivitiesReportView({@required this.projectionFactory, @required this.clock, this.durationFormatter});
 
   @override
   State<StatefulWidget> createState() {
@@ -34,7 +36,7 @@ class _ActivitiesReportViewState extends State<ActivitiesReportView> {
     todaysActivitiesDurationReportProjection?.stop();
     todaysActivitiesDurationReportProjection = widget.projectionFactory.getTodaysActivitiesDurationReport();
     todaysActivitiesDurationReportProjection.stream.forEach((report) {
-      selectedActivities.retainAll(report.activityDurations.map((ad) => ad.activityName));
+      selectedActivities.retainAll(report.getActivityDurations(widget.clock.now()).map((ad) => ad.activityName));
     });
     timeRedrawingTimer = Timer.periodic(Duration(minutes: 1), (_) => setState(() {}));
   }
@@ -63,7 +65,7 @@ class _ActivitiesReportViewState extends State<ActivitiesReportView> {
 
   Widget _build(BuildContext context, AsyncSnapshot<dynamic> reportSnapshot) {
     ActivitiesDurationReport report = reportSnapshot.data;
-    if (report.isEmpty) {
+    if (report.isEmptyAt(widget.clock.now())) {
       return _buildEmpty(context);
     } else {
       return _buildReport(context, report);
@@ -75,6 +77,7 @@ class _ActivitiesReportViewState extends State<ActivitiesReportView> {
   }
 
   Widget _buildReport(BuildContext context, ActivitiesDurationReport report) {
+    final now = widget.clock.now();
     return Column(children: <Widget>[
       Expanded(
           child: Column(
@@ -82,7 +85,7 @@ class _ActivitiesReportViewState extends State<ActivitiesReportView> {
             children: <Widget>[
               ActivitiesReportHeading(),
               Flexible(child: ActivityDurationList(
-                activityDurations: report.activityDurations,
+                activityDurations: report.getActivityDurations(now),
                 selectedActivities: selectedActivities,
                 durationFormatter: widget.durationFormatter,
                 onActivityDurationClicked: _handleItemClicked,
@@ -95,7 +98,7 @@ class _ActivitiesReportViewState extends State<ActivitiesReportView> {
           child: Padding(
               padding: EdgeInsets.only(top: 8),
               child: SelectedDuration(
-                totalDuration: report.totalDurationOf(selectedActivities),
+                totalDuration: report.totalDurationOf(selectedActivities, now),
                 durationFormatter: widget.durationFormatter,
                 onRemoveSelection: _handleRemoveSelection,
               )

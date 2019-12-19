@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_event_projections/flutter_event_projections.dart';
 import 'package:flutter_repository/flutter_repository.dart';
@@ -12,6 +13,7 @@ import 'src/view/app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  final clock = Clock();
   final controller = StreamController<Event<Specification>>.broadcast();
   final events = ObservableEventStream(controller);
   final activityPersistence = ActivityPersistence();
@@ -21,7 +23,7 @@ void main() async {
   builder.instructions(MigrationInstructions(version, activityPersistence.getMigrationScriptsFor(version)));
   final database = await builder.build();
   final startedActivities = activityPersistence.getStartedActivitiesFrom(database);
-  final boundedContext = ActivityBoundedContext(startedActivities, events);
-  final projectionFactory = ProjectionFactory(startedActivities, events);
-  runApp(TimeTrakrApp(boundedContext, projectionFactory));
+  final boundedContext = ActivityBoundedContext(startedActivities, events, clock);
+  final projectionFactory = ProjectionFactory(startedActivities, events, clock);
+  runApp(TimeTrakrApp(boundedContext: boundedContext, projectionFactory: projectionFactory, clock: clock));
 }

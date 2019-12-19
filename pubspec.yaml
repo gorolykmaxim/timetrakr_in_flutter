@@ -14,6 +14,7 @@ dependencies:
   flutter_slidable: ^0.5.4
   animated_stream_list: ^1.1.0
   short_stream_builder: ^0.0.1
+  clock: ^1.0.1
   flutter:
     sdk: flutter
   cupertino_icons: ^0.1.2

@@ -1,3 +1,4 @@
+import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:timetrakr_in_flutter/src/duration.dart';
@@ -14,8 +15,9 @@ class TimeTrakrApp extends StatefulWidget {
   final ProjectionFactory projectionFactory;
   final DateFormat dateFormat = DateFormat("HH:mm");
   final DurationFormatter durationFormatter = DurationFormatter.hoursAndMinutes();
+  final Clock clock;
 
-  TimeTrakrApp(this.boundedContext, this.projectionFactory);
+  TimeTrakrApp({@required this.boundedContext, @required this.projectionFactory, @required this.clock});
 
   @override
   State<StatefulWidget> createState() {
@@ -32,14 +34,16 @@ class _TimeTrakrAppState extends State<TimeTrakrApp> {
   void initState() {
     views = [
       StartedActivitiesView(
-          widget.boundedContext,
-          widget.projectionFactory,
+          boundedContext: widget.boundedContext,
+          projectionFactory: widget.projectionFactory,
+          clock: widget.clock,
           controller: controller,
           dateFormat: widget.dateFormat,
       ),
       ActivitiesReportView(
           projectionFactory: widget.projectionFactory,
-          durationFormatter: widget.durationFormatter
+          durationFormatter: widget.durationFormatter,
+          clock: widget.clock,
       )
     ];
   }

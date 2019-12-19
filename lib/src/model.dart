@@ -1,3 +1,4 @@
+import 'package:clock/clock.dart';
 import 'package:flutter_event_projections/flutter_event_projections.dart';
 import 'package:flutter_repository/flutter_repository.dart';
 import 'package:intl/intl.dart';
@@ -65,15 +66,14 @@ class AnotherActivityAlreadyStartedException extends ActivityStartException {
   }
 }
 
-class StartedActivity {
+class StartedActivityFactory {
   static final int expectedMinimalNameLength = 3;
-  final String name;
-  final DateTime startDate;
+  final Clock _clock;
 
-  StartedActivity(this.name, this.startDate);
+  StartedActivityFactory(this._clock);
 
-  factory StartedActivity.create(String name, {DateTime startDate}) {
-    final now = DateTime.now();
+  StartedActivity create(String name, {DateTime startDate}) {
+    final now = _clock.now();
     if (startDate == null) {
       startDate = now;
     } else if (startDate.isAfter(now)) {
@@ -84,6 +84,13 @@ class StartedActivity {
     }
     return StartedActivity(name, startDate);
   }
+}
+
+class StartedActivity {
+  final String name;
+  final DateTime startDate;
+
+  StartedActivity(this.name, this.startDate);
 
   ActivityDuration getDurationBeforeEndingAt(DateTime endDate) => ActivityDuration(name, endDate.difference(startDate));
 
@@ -117,10 +124,12 @@ class ActivityRemovedEvent extends Event<Specification> {
 }
 
 class ActivityBoundedContext {
+  final StartedActivityFactory _activityFactory;
   final Collection<StartedActivity> _startedActivities;
   final EventStream<Specification> _events;
 
-  ActivityBoundedContext(this._startedActivities, this._events);
+  ActivityBoundedContext(this._startedActivities, this._events, Clock clock):
+        _activityFactory = StartedActivityFactory(clock);
 
   Future<void> startNewActivity(String activityName, DateTime startDate) async {
     try {
@@ -129,7 +138,7 @@ class ActivityBoundedContext {
       if (activities.isNotEmpty) {
         throw AnotherActivityAlreadyStartedException(activities[0]);
       }
-      await _startedActivities.add(StartedActivity.create(activityName, startDate: startDate));
+      await _startedActivities.add(_activityFactory.create(activityName, startDate: startDate));
       _events.publish(ActivityStartedEvent());
     } on CollectionException catch (e) {
       throw ActivityStartModificationException.create(activityName, startDate, e);
@@ -178,7 +187,7 @@ class ActivitiesDurationReport {
 
   ActivitiesDurationReport.fromActivitiesInChronologicalOrder(this._startedActivities);
 
-  Iterable<ActivityDuration> get _activityDurations {
+  Iterable<ActivityDuration> _getActivityDurations(DateTime time) {
     final activitiesFound = Set<String>();
     final activityNameToDuration = <String, ActivityDuration>{};
     for (var i = 0; i < _startedActivities.length; i++) {
@@ -188,7 +197,7 @@ class ActivitiesDurationReport {
       if (i + 1 < _startedActivities.length) {
         nextActivity = _startedActivities[i + 1];
       } else {
-        nextActivity = StartedActivity.create(activitiesFound.toString());
+        nextActivity = StartedActivity(activitiesFound.toString(), time);
       }
       final activityDuration = activity.getDurationBeforeEndingAt(nextActivity.startDate);
       var existingActivityDuration = activityNameToDuration[activity.name];
@@ -202,12 +211,12 @@ class ActivitiesDurationReport {
     return activityNameToDuration.values;
   }
 
-  Iterable<ActivityDuration> get activityDurations => _activityDurations.where((a) => a.duration.inMinutes > 1);
+  Iterable<ActivityDuration> getActivityDurations(DateTime time) => _getActivityDurations(time).where((a) => a.duration.inMinutes > 1);
 
-  bool get isEmpty => activityDurations.isEmpty;
+  bool isEmptyAt(DateTime time) => getActivityDurations(time).isEmpty;
 
-  Duration totalDurationOf(Iterable<String> activities) {
-    final durations = activityDurations
+  Duration totalDurationOf(Iterable<String> activities, DateTime time) {
+    final durations = getActivityDurations(time)
         .where((ad) => activities.contains(ad.activityName))
         .map((ad) => ad.duration);
     if (durations.isEmpty) {

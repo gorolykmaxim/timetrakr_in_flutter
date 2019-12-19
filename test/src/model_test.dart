@@ -1,3 +1,4 @@
+import 'package:clock/clock.dart';
 import 'package:flutter_event_projections/flutter_event_projections.dart';
 import 'package:flutter_repository/flutter_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -13,13 +14,14 @@ void main() {
     EventStream<Specification> events;
     const activityName = 'Working';
     final startDate = DateTime.now();
+    final clock = Clock.fixed(startDate);
     ActivityBoundedContext context;
     setUp(() {
       startedActivities = SimpleCollectionMock();
       events = ObservableEventStreamMock();
       when(startedActivities.findAll(ActivitySpecification.startedAt(startDate)))
           .thenAnswer((_) => Future.value(<StartedActivity>[]));
-      context = ActivityBoundedContext(startedActivities, events);
+      context = ActivityBoundedContext(startedActivities, events, clock);
     });
     test('fails to start new activity at the time when another activity has been stared', () {
       // given
@@ -89,11 +91,10 @@ void main() {
         wakeUp, breakfast, sneezeBeforeWork, work
       ]);
       // then
-      final activityDurations = List<ActivityDuration>.from(report.activityDurations);
+      final activityDurations = List<ActivityDuration>.from(report.getActivityDurations(now));
       expect(activityDurations[0], ActivityDuration('wake up', Duration(minutes: 15)));
       expect(activityDurations[1], ActivityDuration('breakfast', Duration(minutes: 14, seconds: 55)));
-      expect(activityDurations[2].activityName, 'work');
-      expect(activityDurations[2].duration >= Duration(hours: 1, minutes: 30), isTrue);
+      expect(activityDurations[2], ActivityDuration('work', Duration(hours: 1, minutes: 30)));
     });
     test('treats several activity start events as a single activity duration', () {
       // when
@@ -101,17 +102,16 @@ void main() {
         wakeUp, breakfast, sneezeDuringBreakfast, continueBreakfast, work
       ]);
       // then
-      final activityDurations = List<ActivityDuration>.from(report.activityDurations);
+      final activityDurations = List<ActivityDuration>.from(report.getActivityDurations(now));
       expect(activityDurations[0], ActivityDuration('wake up', Duration(minutes: 15)));
       expect(activityDurations[1], ActivityDuration('breakfast', Duration(minutes: 14, seconds: 55)));
-      expect(activityDurations[2].activityName, 'work');
-      expect(activityDurations[2].duration >= Duration(hours: 1, minutes: 30), isTrue);
+      expect(activityDurations[2], ActivityDuration('work', Duration(hours: 1, minutes: 30)));
     });
     test('is empty if there are no activity durations, that are longer than 1 minute', () {
       // when
       final report = ActivitiesDurationReport.fromActivitiesInChronologicalOrder([nothing]);
       // then
-      expect(report.isEmpty, isTrue);
+      expect(report.isEmptyAt(now), isTrue);
     });
     test('is not empty if there are activity durations, that are longer than 1 minute', () {
       // when
@@ -119,21 +119,21 @@ void main() {
         wakeUp, breakfast, work
       ]);
       // then
-      expect(report.isEmpty, isFalse);
+      expect(report.isEmptyAt(now), isFalse);
     });
     test('returns total duration of all activities that took longer than 1 minute', () {
       // when
       final report = ActivitiesDurationReport.fromActivitiesInChronologicalOrder([
         wakeUp, breakfast, work
       ]);
-      final totalDuration = report.totalDurationOf(activities);
+      final totalDuration = report.totalDurationOf(activities, now);
       // then
-      expect(totalDuration >= Duration(hours: 2), isTrue);
+      expect(totalDuration, Duration(hours: 2));
     });
     test('returns zero if there were no activities that took longer than 1 minute', () {
       // when
       final report = ActivitiesDurationReport.fromActivitiesInChronologicalOrder([nothing]);
-      final totalDuration = report.totalDurationOf(activities);
+      final totalDuration = report.totalDurationOf(activities, now);
       // then
       expect(totalDuration, Duration.zero);
     });
@@ -142,7 +142,7 @@ void main() {
       final report = ActivitiesDurationReport.fromActivitiesInChronologicalOrder([
         wakeUp, breakfast, sneezeDuringBreakfast, continueBreakfast, sneezeBeforeWork, work
       ]);
-      final totalDuration = report.totalDurationOf([sneezeBeforeWork.name]);
+      final totalDuration = report.totalDurationOf([sneezeBeforeWork.name], now);
       // then
       expect(totalDuration, Duration.zero);
     });
@@ -151,9 +151,9 @@ void main() {
       final report = ActivitiesDurationReport.fromActivitiesInChronologicalOrder([
         wakeUp, breakfast, sneezeDuringBreakfast, continueBreakfast, sneezeBeforeWork, work
       ]);
-      final totalDuration = report.totalDurationOf(activities);
+      final totalDuration = report.totalDurationOf(activities, now);
       // then
-      expect(totalDuration >= Duration(hours: 1, minutes: 59, seconds: 50), isTrue);
+      expect(totalDuration, Duration(hours: 1, minutes: 59, seconds: 50));
     });
   });
 }

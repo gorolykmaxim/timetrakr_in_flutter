@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:clock/clock.dart';
 import 'package:flutter_event_projections/flutter_event_projections.dart';
 import 'package:flutter_repository/flutter_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -13,11 +14,12 @@ import 'common.dart';
 void main() {
   group('ProjectionFactory', () {
     final now = DateTime.now();
+    final clock = Clock.fixed(now);
     final today = DateTime(now.year, now.month, now.day);
     final specification = ActivitySpecification.startedAfter(today);
     final expectedActivities = [
-      StartedActivity.create('doing part time work'),
-      StartedActivity.create('doing main work')
+      StartedActivity('doing part time work', now),
+      StartedActivity('doing main work', now)
     ];
     final expectedReport = ActivitiesDurationReport.fromActivitiesInChronologicalOrder(expectedActivities);
     ImmutableCollection<StartedActivity> startedActivities;
@@ -30,7 +32,7 @@ void main() {
       startedActivities = SimpleCollectionMock();
       when(startedActivities.findAll(specification))
           .thenAnswer((_) => Future.value(expectedActivities));
-      factory = ProjectionFactory(startedActivities, observableEventStream);
+      factory = ProjectionFactory(startedActivities, observableEventStream, clock);
     });
     tearDown(() {
       controller.close();

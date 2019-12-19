@@ -7,9 +7,10 @@ class StartActivityBottomSheetDialog extends StatefulWidget {
   final OnStartActivity onStartActivity;
   final String activityName;
   final BuildContext bottomSheetContext;
+  final DateTime startDate;
   final DateFormat dateFormat;
 
-  StartActivityBottomSheetDialog({this.onStartActivity, this.activityName, @required this.bottomSheetContext, DateFormat dateFormat}):
+  StartActivityBottomSheetDialog({this.onStartActivity, this.activityName, @required this.bottomSheetContext, @required this.startDate, DateFormat dateFormat}):
         this.dateFormat = dateFormat ?? DateFormat();
 
   @override
@@ -29,7 +30,7 @@ class _StartActivityBottomSheetDialogState extends State<StartActivityBottomShee
     super.initState();
     activityName = widget.activityName ?? '';
     controller.text = activityName;
-    startDate = DateTime.now();
+    startDate = widget.startDate;
   }
 
   void _startActivity() {
