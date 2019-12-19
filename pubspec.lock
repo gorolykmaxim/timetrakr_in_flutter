@@ -78,6 +78,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.2"
+  emptiable_list:
+    dependency: "direct main"
+    description:
+      name: emptiable_list
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.1"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -89,7 +96,7 @@ packages:
       name: flutter_event_projections
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.2.0"
+    version: "1.2.2"
   flutter_repository:
     dependency: "direct main"
     description:

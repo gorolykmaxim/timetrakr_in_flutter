@@ -1,8 +1,8 @@
 import 'package:animated_stream_list/animated_stream_list.dart';
+import 'package:emptiable_list/emptiable_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
-import 'package:timetrakr_in_flutter/src/view/emptiable_list.dart';
 
 import '../../model.dart';
 
@@ -31,7 +31,7 @@ class StartedActivitiesListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListThatCanBeEmpty(
+    return EmptiableList(
         listStream: startedActivitiesStream,
         list: Card(
           child: AnimatedStreamList(
