@@ -43,6 +43,7 @@ class _ActivitiesReportViewState extends State<ActivitiesReportView> {
 
   @override
   void dispose() {
+    super.dispose();
     timeRedrawingTimer?.cancel();
     todaysActivitiesDurationReportProjection?.stop();
   }
