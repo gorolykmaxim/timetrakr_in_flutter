@@ -114,13 +114,11 @@ class StartedActivity {
 }
 
 class ActivityStartedEvent extends Event<Specification> {
-  static final type = 'An activity has been started';
-  ActivityStartedEvent() : super(type, {});
+  ActivityStartedEvent() : super(ActivityStartedEvent, {});
 }
 
 class ActivityRemovedEvent extends Event<Specification> {
-  static final type = 'An activity start event has been removed';
-  ActivityRemovedEvent(): super(type, {});
+  ActivityRemovedEvent(): super(ActivityRemovedEvent, {});
 }
 
 class ActivityBoundedContext {
