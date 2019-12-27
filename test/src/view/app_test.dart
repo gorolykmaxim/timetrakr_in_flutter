@@ -36,6 +36,7 @@ void main() {
       controller.close();
     });
     testWidgets('shows todays started activities view and a start new activity button', (WidgetTester tester) async {
+      // when
       await tester.pumpWidget(
           TimeTrakrApp(
               boundedContext: boundedContext,
@@ -43,12 +44,14 @@ void main() {
               clock: clock
           )
       );
+      // then
       expect(find.byType(StartedActivitiesView), findsOneWidget);
       expect(find.byType(ActivitiesReportView), findsOneWidget);
       expect(find.byType(TimeTrakrBottomNavigationBar), findsOneWidget);
       expect(find.byType(StartActivityFloatingButton), findsOneWidget);
     });
     testWidgets('switches to activities report view while removing a start new activity button', (WidgetTester tester) async {
+      // when
       await tester.pumpWidget(
         TimeTrakrApp(
             boundedContext: boundedContext,
@@ -58,12 +61,14 @@ void main() {
       );
       await tester.tap(find.text('Results'));
       await tester.pump();
+      // then
       IndexedStack stack = tester.widget(find.byType(IndexedStack));
       expect(stack.index, 1);
       Scaffold scaffold = tester.widget(find.byType(Scaffold));
       expect(scaffold.floatingActionButton, isNull);
     });
     testWidgets('switches to todays started activities view and shows a start new activity button', (WidgetTester tester) async {
+      // when
       await tester.pumpWidget(
           TimeTrakrApp(
               boundedContext: boundedContext,
@@ -75,6 +80,7 @@ void main() {
       await tester.pump();
       await tester.tap(find.text('Activities'));
       await tester.pump();
+      // then
       IndexedStack stack = tester.widget(find.byType(IndexedStack));
       expect(stack.index, 0);
       Scaffold scaffold = tester.widget(find.byType(Scaffold));

@@ -35,19 +35,24 @@ void main() {
   group('ErrorSnackBar', () {
     const errorMessage = 'Error message';
     testWidgets('displays snackbar with an error message for a default duration', (WidgetTester tester) async {
+      // when
       await tester.pumpWidget(DummyWidget(error: errorMessage));
       expect(find.text(errorMessage), findsNothing);
       await tester.tap(find.byKey(DummyWidget.tapTarget));
       await tester.pumpAndSettle(Duration(seconds: 1));
+      // then
       expect(find.text(errorMessage), findsOneWidget);
       await tester.pumpAndSettle(Duration(seconds: 5));
       expect(find.text(errorMessage), findsNothing);
     });
     testWidgets('displays snackbar with an error message for a specified duration', (WidgetTester tester) async {
+      // given
       const expectedDuration = const Duration(seconds: 2);
+      // when
       await tester.pumpWidget(DummyWidget(error: errorMessage, duration: expectedDuration));
       expect(find.text(errorMessage), findsNothing);
       await tester.tap(find.byKey(DummyWidget.tapTarget));
+      // then
       await tester.pumpAndSettle(Duration(seconds: 1));
       expect(find.text(errorMessage), findsOneWidget);
       await tester.pumpAndSettle(expectedDuration);

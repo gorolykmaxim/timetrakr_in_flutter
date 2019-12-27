@@ -23,7 +23,9 @@ void main() {
   group('TimeTrakrBottomNavigationBar', () {
     const resultsIndex = 1;
     testWidgets('selects activities view by default', (WidgetTester tester) async {
+      // when
       await tester.pumpWidget(DummyWidget());
+      // then
       expect(find.byIcon(Icons.list), findsOneWidget);
       expect(find.text('Activities'), findsOneWidget);
       expect(find.byIcon(Icons.timer), findsOneWidget);
