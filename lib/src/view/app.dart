@@ -76,6 +76,7 @@ class _TimeTrakrAppState extends State<TimeTrakrApp> {
         body: IndexedStack(children: views, index: currentViewIndex),
         floatingActionButton: floatingActionButton,
         bottomNavigationBar: TimeTrakrBottomNavigationBar(
+          currentIndex: currentViewIndex,
           onCurrentViewChange: _changeCurrentView,
         ),
       ),
