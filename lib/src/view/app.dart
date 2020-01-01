@@ -21,37 +21,41 @@ class TimeTrakrApp extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return _TimeTrakrAppState();
+    return TimeTrakrAppState();
   }
 }
 
-class _TimeTrakrAppState extends State<TimeTrakrApp> {
+class TimeTrakrAppState extends State<TimeTrakrApp> {
   int currentViewIndex = 0;
   List<Widget> views;
   final StartedActivitiesViewController controller = StartedActivitiesViewController();
 
-  @override
-  void initState() {
+  void initialize(TimeTrakrApp widget) {
     views = [
       StartedActivitiesView(
-          boundedContext: widget.boundedContext,
-          projectionFactory: widget.projectionFactory,
-          clock: widget.clock,
-          controller: controller,
-          dateFormat: widget.dateFormat,
+        boundedContext: widget.boundedContext,
+        projectionFactory: widget.projectionFactory,
+        clock: widget.clock,
+        controller: controller,
+        dateFormat: widget.dateFormat,
       ),
       ActivitiesReportView(
-          projectionFactory: widget.projectionFactory,
-          durationFormatter: widget.durationFormatter,
-          clock: widget.clock,
+        projectionFactory: widget.projectionFactory,
+        durationFormatter: widget.durationFormatter,
+        clock: widget.clock,
       )
     ];
   }
 
-  void _changeCurrentView(int newViewIndex) {
-    setState(() {
+  void changeCurrentView(State state, int newViewIndex) {
+    state.setState(() {
       currentViewIndex = newViewIndex;
     });
+  }
+
+  @override
+  void initState() {
+    initialize(widget);
   }
 
   @override
@@ -77,7 +81,7 @@ class _TimeTrakrAppState extends State<TimeTrakrApp> {
         floatingActionButton: floatingActionButton,
         bottomNavigationBar: TimeTrakrBottomNavigationBar(
           currentIndex: currentViewIndex,
-          onCurrentViewChange: _changeCurrentView,
+          onCurrentViewChange: (i) => changeCurrentView(this, i),
         ),
       ),
     );

@@ -13,15 +13,24 @@ class FloatUpAnimation extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return _FloatUpAnimationState();
+    return FloatUpAnimationState();
   }
 }
 
-class _FloatUpAnimationState extends State<FloatUpAnimation>
+class FloatUpAnimationState extends State<FloatUpAnimation>
     with SingleTickerProviderStateMixin {
   AnimationController controller;
 
-  void _toggleAnimation() {
+  void initialize(FloatUpAnimation widget) {
+    controller = AnimationController(vsync: this, duration: widget.duration);
+    toggleAnimation(widget);
+  }
+
+  void destroy() {
+    controller.dispose();
+  }
+
+  void toggleAnimation(FloatUpAnimation widget) {
     if (widget.display) {
       controller.forward();
     } else {
@@ -31,19 +40,18 @@ class _FloatUpAnimationState extends State<FloatUpAnimation>
 
   @override
   void initState() {
-    controller = AnimationController(vsync: this, duration: widget.duration);
-    _toggleAnimation();
+    initialize(widget);
   }
 
   @override
   void didUpdateWidget(FloatUpAnimation oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _toggleAnimation();
+    toggleAnimation(widget);
   }
 
   @override
   void dispose() {
-    controller.dispose();
+    destroy();
     super.dispose();
   }
 

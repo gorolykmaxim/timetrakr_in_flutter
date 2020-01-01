@@ -15,36 +15,34 @@ class StartActivityBottomSheetDialog extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return _StartActivityBottomSheetDialogState();
+    return StartActivityBottomSheetDialogState();
   }
 }
 
-class _StartActivityBottomSheetDialogState extends State<StartActivityBottomSheetDialog> {
+class StartActivityBottomSheetDialogState extends State<StartActivityBottomSheetDialog> {
   final double padding = 15;
   String activityName;
   DateTime startDate;
   TextEditingController controller = TextEditingController();
 
-  @override
-  void initState() {
-    super.initState();
+  void initialize(StartActivityBottomSheetDialog widget) {
     activityName = widget.activityName ?? '';
     controller.text = activityName;
     startDate = widget.startDate;
   }
 
-  void _startActivity() {
+  void startActivity(StartActivityBottomSheetDialog widget, NavigatorState navigatorState) {
     if (widget.onStartActivity != null && activityName.isNotEmpty) {
-      Navigator.pop(widget.bottomSheetContext);
+      navigatorState.pop();
       widget.onStartActivity(activityName, startDate);
     }
   }
 
-  void _setActivityName(String name) {
+  void setActivityName(String name) {
     activityName = name;
   }
 
-  Future<void> _handleTimeChange(BuildContext context) async {
+  Future<void> handleTimeChange(State state, BuildContext context) async {
     var time = TimeOfDay.fromDateTime(startDate);
     time = await showTimePicker(
         context: context,
@@ -57,7 +55,7 @@ class _StartActivityBottomSheetDialogState extends State<StartActivityBottomShee
         }
     );
     if (time != null) {
-      setState(() {
+      state.setState(() {
         startDate = DateTime(
             startDate.year,
             startDate.month,
@@ -70,7 +68,14 @@ class _StartActivityBottomSheetDialogState extends State<StartActivityBottomShee
   }
 
   @override
+  void initState() {
+    super.initState();
+    initialize(widget);
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final navigatorState = Navigator.of(context);
     return SingleChildScrollView(
         child: Container(
           padding: EdgeInsets.only(
@@ -86,8 +91,8 @@ class _StartActivityBottomSheetDialogState extends State<StartActivityBottomShee
                 decoration: InputDecoration.collapsed(
                     hintText: 'What task are you working on?'
                 ),
-                onChanged: _setActivityName,
-                onSubmitted: (_) => _startActivity(),
+                onChanged: (name) => setActivityName(name),
+                onSubmitted: (_) => startActivity(widget, navigatorState),
               ),
               Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -97,10 +102,10 @@ class _StartActivityBottomSheetDialogState extends State<StartActivityBottomShee
                         'since ${widget.dateFormat.format(startDate)}',
                         style: TextStyle(color: Colors.grey),
                       ),
-                      onTap: () => _handleTimeChange(context),
+                      onTap: () => handleTimeChange(this, context),
                     ),
                     RaisedButton(
-                        onPressed: _startActivity,
+                        onPressed: () => startActivity(widget, navigatorState),
                         child: Text('START')
                     )
                   ]

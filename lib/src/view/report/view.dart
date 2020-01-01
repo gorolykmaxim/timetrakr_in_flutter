@@ -22,17 +22,16 @@ class ActivitiesReportView extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return _ActivitiesReportViewState();
+    return ActivitiesReportViewState();
   }
 }
 
-class _ActivitiesReportViewState extends State<ActivitiesReportView> {
+class ActivitiesReportViewState extends State<ActivitiesReportView> {
   final Set<String> selectedActivities = Set();
   Timer timeRedrawingTimer;
   Projection<Specification, ActivitiesDurationReport> todaysActivitiesDurationReportProjection;
 
-  @override
-  void initState() {
+  void initialize(ActivitiesReportView widget) {
     todaysActivitiesDurationReportProjection?.stop();
     todaysActivitiesDurationReportProjection = widget.projectionFactory.getTodaysActivitiesDurationReport();
     todaysActivitiesDurationReportProjection.stream.forEach((report) {
@@ -41,27 +40,36 @@ class _ActivitiesReportViewState extends State<ActivitiesReportView> {
     timeRedrawingTimer = Timer.periodic(Duration(minutes: 1), (_) => setState(() {}));
   }
 
-  @override
-  void dispose() {
-    super.dispose();
+  void destroy() {
     timeRedrawingTimer?.cancel();
     todaysActivitiesDurationReportProjection?.stop();
   }
 
-  void _handleRemoveSelection() {
-    setState(() {
+  void handleRemoveSelection(State state) {
+    state.setState(() {
       selectedActivities.clear();
     });
   }
 
-  void _handleItemClicked(ActivityDuration activityDuration) {
-    setState(() {
+  void handleItemClicked(State state, ActivityDuration activityDuration) {
+    state.setState(() {
       if (selectedActivities.contains(activityDuration.activityName)) {
         selectedActivities.remove(activityDuration.activityName);
       } else {
         selectedActivities.add(activityDuration.activityName);
       }
     });
+  }
+
+  @override
+  void initState() {
+    initialize(widget);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    destroy();
   }
 
   Widget _build(BuildContext context, AsyncSnapshot<dynamic> reportSnapshot) {
@@ -89,7 +97,7 @@ class _ActivitiesReportViewState extends State<ActivitiesReportView> {
                 activityDurations: report.getActivityDurations(now),
                 selectedActivities: selectedActivities,
                 durationFormatter: widget.durationFormatter,
-                onActivityDurationClicked: _handleItemClicked,
+                onActivityDurationClicked: (activityDuration) => handleItemClicked(this, activityDuration),
               ))
             ],
           )
@@ -101,7 +109,7 @@ class _ActivitiesReportViewState extends State<ActivitiesReportView> {
               child: SelectedDuration(
                 totalDuration: report.totalDurationOf(selectedActivities, now),
                 durationFormatter: widget.durationFormatter,
-                onRemoveSelection: _handleRemoveSelection,
+                onRemoveSelection: () => handleRemoveSelection(this),
               )
           )
       )
