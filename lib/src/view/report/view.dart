@@ -32,7 +32,6 @@ class ActivitiesReportViewState extends State<ActivitiesReportView> {
   Projection<Specification, ActivitiesDurationReport> todaysActivitiesDurationReportProjection;
 
   void initialize(ActivitiesReportView widget) {
-    todaysActivitiesDurationReportProjection?.stop();
     todaysActivitiesDurationReportProjection = widget.projectionFactory.getTodaysActivitiesDurationReport();
     todaysActivitiesDurationReportProjection.stream.forEach((report) {
       selectedActivities.retainAll(report.getActivityDurations(widget.clock.now()).map((ad) => ad.activityName));
