@@ -14,7 +14,7 @@ class TimeTrakrApp extends StatefulWidget {
   final ActivityBoundedContext boundedContext;
   final ProjectionFactory projectionFactory;
   final DateFormat dateFormat = DateFormat("HH:mm");
-  final DurationFormatter durationFormatter = DurationFormatter.hoursAndMinutes();
+  final DurationFormat durationFormat = DurationFormat.hoursAndMinutes();
   final Clock clock;
 
   TimeTrakrApp({@required this.boundedContext, @required this.projectionFactory, @required this.clock});
@@ -41,7 +41,7 @@ class TimeTrakrAppState extends State<TimeTrakrApp> {
       ),
       ActivitiesReportView(
         projectionFactory: widget.projectionFactory,
-        durationFormatter: widget.durationFormatter,
+        durationFormat: widget.durationFormat,
         clock: widget.clock,
       )
     ];

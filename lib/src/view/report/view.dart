@@ -15,10 +15,10 @@ import 'selected_duration.dart';
 
 class ActivitiesReportView extends StatefulWidget {
   final ProjectionFactory projectionFactory;
-  final DurationFormatter durationFormatter;
+  final DurationFormat durationFormat;
   final Clock clock;
 
-  ActivitiesReportView({@required this.projectionFactory, @required this.clock, this.durationFormatter});
+  ActivitiesReportView({@required this.projectionFactory, @required this.clock, this.durationFormat});
 
   @override
   State<StatefulWidget> createState() {
@@ -95,7 +95,7 @@ class ActivitiesReportViewState extends State<ActivitiesReportView> {
               Flexible(child: ActivityDurationList(
                 activityDurations: report.getActivityDurations(now),
                 selectedActivities: selectedActivities,
-                durationFormatter: widget.durationFormatter,
+                durationFormatter: widget.durationFormat,
                 onActivityDurationClicked: (activityDuration) => handleItemClicked(this, activityDuration),
               ))
             ],
@@ -107,7 +107,7 @@ class ActivitiesReportViewState extends State<ActivitiesReportView> {
               padding: EdgeInsets.only(top: 8),
               child: SelectedDuration(
                 totalDuration: report.totalDurationOf(selectedActivities, now),
-                durationFormatter: widget.durationFormatter,
+                durationFormat: widget.durationFormat,
                 onRemoveSelection: () => handleRemoveSelection(this),
               )
           )

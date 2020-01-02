@@ -5,20 +5,20 @@ import '../../duration.dart';
 class SelectedDuration extends StatelessWidget {
   final Duration totalDuration;
   final Function onRemoveSelection;
-  final DurationFormatter durationFormatter;
+  final DurationFormat durationFormat;
 
   SelectedDuration({
     @required this.totalDuration,
     this.onRemoveSelection,
-    DurationFormatter durationFormatter})
-      : this.durationFormatter = durationFormatter ?? DurationFormatter.hoursAndMinutes();
+    DurationFormat durationFormat})
+      : this.durationFormat = durationFormat ?? DurationFormat.hoursAndMinutes();
 
   @override
   Widget build(BuildContext context) {
     return Card(
         elevation: 2,
         child: ListTile(
-          title: Text('Total duration: ${durationFormatter.format(totalDuration)}'),
+          title: Text('Total duration: ${durationFormat.applyTo(totalDuration)}'),
           trailing: IconButton(
               icon: Icon(Icons.close, color: Theme.of(context).primaryColor),
               tooltip: 'Clear selection',

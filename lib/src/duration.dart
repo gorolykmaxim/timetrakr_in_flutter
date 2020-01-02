@@ -1,13 +1,13 @@
-abstract class DurationFormatter {
-  factory DurationFormatter.hoursAndMinutes() {
+abstract class DurationFormat {
+  factory DurationFormat.hoursAndMinutes() {
     return _HourAndMinutesDurationFormatter();
   }
-  String format(Duration duration);
+  String applyTo(Duration duration);
 }
 
-class _HourAndMinutesDurationFormatter implements DurationFormatter {
+class _HourAndMinutesDurationFormatter implements DurationFormat {
   @override
-  String format(Duration duration) {
+  String applyTo(Duration duration) {
     final result = <String>[];
     final hours = duration.inHours;
     if (hours > 0) {

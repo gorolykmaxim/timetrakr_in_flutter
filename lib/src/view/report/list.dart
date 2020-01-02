@@ -7,7 +7,7 @@ class ActivityDurationList extends StatelessWidget {
   final Iterable<ActivityDuration> activityDurations;
   final OnActivityDurationClicked onActivityDurationClicked;
   final Iterable<String> selectedActivities;
-  final DurationFormatter durationFormatter;
+  final DurationFormat durationFormatter;
 
   ActivityDurationList({@required this.activityDurations, this.onActivityDurationClicked, Iterable<String> selectedActivities, this.durationFormatter}):
         this.selectedActivities = selectedActivities ?? [];
@@ -17,7 +17,7 @@ class ActivityDurationList extends StatelessWidget {
     final activityDurationWidgets = activityDurations
         .map((a) => ActivityDurationItem(
           activityDuration: a,
-          durationFormatter: durationFormatter,
+          durationFormat: durationFormatter,
           isSelected: selectedActivities.contains(a.activityName),
           onActivityDurationClicked: onActivityDurationClicked))
         .toList();
@@ -30,11 +30,11 @@ typedef OnActivityDurationClicked = void Function(ActivityDuration activityDurat
 class ActivityDurationItem extends StatelessWidget {
   final OnActivityDurationClicked onActivityDurationClicked;
   final ActivityDuration activityDuration;
-  final DurationFormatter durationFormatter;
+  final DurationFormat durationFormat;
   final bool isSelected;
 
-  ActivityDurationItem({@required this.activityDuration, DurationFormatter durationFormatter, this.isSelected = false, this.onActivityDurationClicked}):
-        this.durationFormatter = durationFormatter ?? DurationFormatter.hoursAndMinutes();
+  ActivityDurationItem({@required this.activityDuration, DurationFormat durationFormat, this.isSelected = false, this.onActivityDurationClicked}):
+        this.durationFormat = durationFormat ?? DurationFormat.hoursAndMinutes();
 
   void _handleTap() {
     if (onActivityDurationClicked != null) {
@@ -57,7 +57,7 @@ class ActivityDurationItem extends StatelessWidget {
                   style: theme.textTheme.body1.copyWith(color: isSelected ? selectedTextColor : null)
               ),
               trailing: Text(
-                durationFormatter.format(activityDuration.duration),
+                durationFormat.applyTo(activityDuration.duration),
                 style: theme.textTheme.body2.copyWith(color: isSelected ? selectedTextColor : theme.primaryColor),
               ),
             )
