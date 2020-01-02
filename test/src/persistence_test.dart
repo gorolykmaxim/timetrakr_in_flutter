@@ -6,8 +6,6 @@ import 'package:sqflite/sqflite.dart';
 import 'package:timetrakr_in_flutter/src/model.dart';
 import 'package:timetrakr_in_flutter/src/persistence.dart';
 
-class DatabaseExecutorMock extends Mock implements DatabaseExecutor {}
-
 void main() {
   final startDate = DateTime.now();
   group('StartedActivityDataSourceServant', () {
@@ -38,19 +36,32 @@ void main() {
   });
   group('ActivityPersistence', () {
     final persistence = ActivityPersistence();
+    SqfliteDatabase database;
+    SqfliteDatabaseBuilder builder;
     DatabaseExecutor executor;
     setUp(() {
+      database = SqfliteDatabaseMock();
+      builder = SqfliteDatabaseBuilderMock();
       executor = DatabaseExecutorMock();
+      when(executor.execute(any)).thenAnswer((_) => Future.value(null));
     });
-    test('returns empty list if migration scripts for unknown version', () {
-      expect(persistence.getMigrationScriptsFor(Version(3000)), []);
-    });
-    test('return list of migration scripts for version 1', () {
+    test('initializes started activity table', () async {
       // when
-      final scripts = persistence.getMigrationScriptsFor(Version(1));
-      scripts.forEach((s) => s.execute(executor));
+      persistence.initializeIn(builder);
+      List<MigrationInstructions> instructions = List<MigrationInstructions>.from(verify(builder.instructions(captureAny)).captured);
+      await Future.wait(instructions.map((i) => i.execute(executor)));
       // then
       verify(executor.execute('CREATE TABLE StartedActivity(name VARCHAR NOT NULL, startDate INTEGER PRIMARY KEY)'));
+    });
+    test('fails to get collection of started activities due to uninitialized database', () {
+      // then
+      expect(() => persistence.getStartedActivities(), throwsA(isInstanceOf<AssertionError>()));
+    });
+    test('returns collection of started activities', () {
+      // when
+      persistence.setDatabase(database);
+      // then
+      expect(persistence.getStartedActivities(), isNotNull);
     });
   });
   group('ActivitySpecification', () {

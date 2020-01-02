@@ -11,7 +11,7 @@ dependencies:
     git:
       url: git://github.com/gorolykmaxim/flutter_commons.git
   flutter_repository: ^1.0.0
-  flutter_repository_sqflite: ^1.0.2
+  flutter_repository_sqflite: ^1.2.0
   flutter_event_projections: ^1.3.1
   emptiable_list: ^1.0.1
   intl: ^0.16.0

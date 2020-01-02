@@ -17,12 +17,9 @@ void main() async {
   final controller = StreamController<Event<Specification>>.broadcast();
   final events = ObservableEventStream(controller);
   final activityPersistence = ActivityPersistence();
-  final builder = SqfliteDatabaseBuilder();
-  final version = Version(1);
-  builder.version = version;
-  builder.instructions(MigrationInstructions(version, activityPersistence.getMigrationScriptsFor(version)));
-  final database = await builder.build();
-  final startedActivities = activityPersistence.getStartedActivitiesFrom(database);
+  final persistence = ApplicationPersistence(Version(1), [activityPersistence]);
+  await persistence.initialize();
+  final startedActivities = activityPersistence.getStartedActivities();
   final boundedContext = ActivityBoundedContext(startedActivities, events, clock);
   final projectionFactory = ProjectionFactory(startedActivities, events, clock);
   runApp(TimeTrakrApp(boundedContext: boundedContext, projectionFactory: projectionFactory, clock: clock));

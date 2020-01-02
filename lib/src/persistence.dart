@@ -24,22 +24,31 @@ class StartedActivityDataSourceServant implements DataSourceServant<StartedActiv
   }
 }
 
-class ActivityPersistence {
+class ActivityPersistence implements Persistence {
   static final _tableName = 'StartedActivity';
   static final name = 'name';
   static final startDate = 'startDate';
+  SqfliteDatabase _database;
 
-  List<MigrationScript> getMigrationScriptsFor(Version version) {
-    if (version == Version(1)) {
-      return [MigrationScript('CREATE TABLE $_tableName($name VARCHAR NOT NULL, $startDate INTEGER PRIMARY KEY)')];
-    } else {
-      return [];
-    }
+  Collection<StartedActivity> getStartedActivities() {
+    assert(_database != null, 'Initialize ApplicationPersistence before calling this method');
+    final servant = StartedActivityDataSourceServant();
+    return SimpleCollection(_database.table(_tableName), servant);
   }
 
-  Collection<StartedActivity> getStartedActivitiesFrom(SqfliteDatabase database) {
-    final servant = StartedActivityDataSourceServant();
-    return SimpleCollection(database.table(_tableName), servant);
+  @override
+  void initializeIn(SqfliteDatabaseBuilder builder) {
+    builder.instructions(MigrationInstructions(
+        Version(1),
+        [
+          MigrationScript('CREATE TABLE $_tableName($name VARCHAR NOT NULL, $startDate INTEGER PRIMARY KEY)')
+        ]
+    ));
+  }
+
+  @override
+  void setDatabase(SqfliteDatabase database) {
+    _database = database;
   }
 }
 
