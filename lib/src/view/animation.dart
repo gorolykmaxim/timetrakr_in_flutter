@@ -13,7 +13,7 @@ class FloatUpAnimation extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return FloatUpAnimationState();
+    return FloatUpAnimationState(duration);
   }
 }
 
@@ -21,8 +21,11 @@ class FloatUpAnimationState extends State<FloatUpAnimation>
     with SingleTickerProviderStateMixin {
   AnimationController controller;
 
+  FloatUpAnimationState(Duration duration) {
+    controller = AnimationController(vsync: this, duration: duration);
+  }
+
   void initialize(FloatUpAnimation widget) {
-    controller = AnimationController(vsync: this, duration: widget.duration);
     toggleAnimation(widget);
   }
 
