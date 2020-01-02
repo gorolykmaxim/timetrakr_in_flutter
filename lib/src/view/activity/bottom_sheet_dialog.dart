@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:timetrakr_in_flutter/src/view/common.dart';
 
 typedef OnStartActivity = void Function(String name, DateTime startDate);
 
 class StartActivityBottomSheetDialog extends StatefulWidget {
   final OnStartActivity onStartActivity;
   final String activityName;
-  final BuildContext bottomSheetContext;
   final DateTime startDate;
   final DateFormat dateFormat;
 
-  StartActivityBottomSheetDialog({this.onStartActivity, this.activityName, @required this.bottomSheetContext, @required this.startDate, DateFormat dateFormat}):
+  StartActivityBottomSheetDialog({this.onStartActivity, this.activityName, @required this.startDate, DateFormat dateFormat}):
         this.dateFormat = dateFormat ?? DateFormat();
 
   @override
@@ -20,33 +20,29 @@ class StartActivityBottomSheetDialog extends StatefulWidget {
 }
 
 class StartActivityBottomSheetDialogState extends State<StartActivityBottomSheetDialog> {
-  final double padding = 15;
-  String activityName;
   DateTime startDate;
   TextEditingController controller = TextEditingController();
+  InjectableDialogContainer dialogContainer = InjectableDialogContainer();
 
   void initialize(StartActivityBottomSheetDialog widget) {
-    activityName = widget.activityName ?? '';
-    controller.text = activityName;
+    if (widget.activityName != null) {
+      controller.text = widget.activityName;
+    }
     startDate = widget.startDate;
   }
 
   void startActivity(StartActivityBottomSheetDialog widget, NavigatorState navigatorState) {
-    if (widget.onStartActivity != null && activityName.isNotEmpty) {
+    if (widget.onStartActivity != null && controller.text.isNotEmpty) {
       navigatorState.pop();
-      widget.onStartActivity(activityName, startDate);
+      widget.onStartActivity(controller.text, startDate);
     }
-  }
-
-  void setActivityName(String name) {
-    activityName = name;
   }
 
   Future<void> handleTimeChange(State state, BuildContext context) async {
     var time = TimeOfDay.fromDateTime(startDate);
-    time = await showTimePicker(
+    time = await dialogContainer.showTimePicker(
         context: context,
-        initialTime: TimeOfDay.fromDateTime(startDate),
+        initialTime: time,
         builder: (BuildContext context, Widget child) {
           return MediaQuery(
               data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
@@ -75,6 +71,7 @@ class StartActivityBottomSheetDialogState extends State<StartActivityBottomSheet
 
   @override
   Widget build(BuildContext context) {
+    const padding = 15.0;
     final navigatorState = Navigator.of(context);
     return SingleChildScrollView(
         child: Container(
@@ -91,7 +88,6 @@ class StartActivityBottomSheetDialogState extends State<StartActivityBottomSheet
                 decoration: InputDecoration.collapsed(
                     hintText: 'What task are you working on?'
                 ),
-                onChanged: (name) => setActivityName(name),
                 onSubmitted: (_) => startActivity(widget, navigatorState),
               ),
               Row(

@@ -71,7 +71,6 @@ class StartedActivitiesViewState extends State<StartedActivitiesView> {
         context: context,
         builder: (bottomSheetContext) => StartActivityBottomSheetDialog(
           onStartActivity: (String name, DateTime startDate) => handleActivityStart(widget, name, startDate, scaffoldState),
-          bottomSheetContext: bottomSheetContext,
           activityName: activityName,
           dateFormat: widget.dateFormat,
           startDate: widget.clock.now(),

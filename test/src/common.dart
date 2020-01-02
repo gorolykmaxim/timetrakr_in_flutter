@@ -23,3 +23,7 @@ class StateDouble extends State {
     fn();
   }
 }
+
+abstract class DiagnosticableMixinFriendlyMock extends Mock {
+  String toString({ DiagnosticLevel minLevel = DiagnosticLevel.debug });
+}
