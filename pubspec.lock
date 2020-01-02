@@ -90,6 +90,15 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_commons:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: eb849cc4d86d58e8507245c3bbad70a9e0035305
+      url: "git://github.com/gorolykmaxim/flutter_commons.git"
+    source: git
+    version: "1.0.0"
   flutter_event_projections:
     dependency: "direct main"
     description:

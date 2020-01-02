@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_commons/flutter_commons.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:timetrakr_in_flutter/src/model.dart';
 import 'package:timetrakr_in_flutter/src/view/activity/bottom_sheet_dialog.dart';
-import 'package:timetrakr_in_flutter/src/view/common.dart';
-
-import '../common.dart';
 
 class BuildContextMock extends Mock implements BuildContext {}
 
