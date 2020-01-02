@@ -43,24 +43,17 @@ class _GetTodaysActivitiesDurationReport implements Query<Specification, Activit
   }
 }
 
-class ProjectionFactory {
+class ApplicationProjectionFactory extends ProjectionFactory<Specification> {
   final ImmutableCollection<StartedActivity> _startedActivities;
-  final ObservableEventStream<Specification> _eventStream;
   final Clock _clock;
 
-  ProjectionFactory(this._startedActivities, this._eventStream, this._clock);
+  ApplicationProjectionFactory(this._startedActivities, ObservableEventStream<Specification> eventStream, this._clock): super(eventStream);
 
   Projection<Specification, List<StartedActivity>> findActivitiesStartedToday() {
-    final query = _FindActivitiesStartedToday(_startedActivities, _clock);
-    final projection = Projection(query, [ActivityStartedEvent, ActivityRemovedEvent]);
-    projection.start(_eventStream.stream);
-    return projection;
+    return create(_FindActivitiesStartedToday(_startedActivities, _clock), [ActivityStartedEvent, ActivityRemovedEvent]);
   }
 
   Projection<Specification, ActivitiesDurationReport> getTodaysActivitiesDurationReport() {
-    final query = _GetTodaysActivitiesDurationReport(_startedActivities, _clock);
-    final projection = Projection(query, [ActivityStartedEvent, ActivityRemovedEvent]);
-    projection.start(_eventStream.stream);
-    return projection;
+    return create(_GetTodaysActivitiesDurationReport(_startedActivities, _clock), [ActivityStartedEvent, ActivityRemovedEvent]);
   }
 }

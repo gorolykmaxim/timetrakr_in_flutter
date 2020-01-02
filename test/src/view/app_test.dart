@@ -17,12 +17,12 @@ void main() {
     Clock clock = Clock.fixed(DateTime.now());
     final stateDouble = StateDouble();
     ActivityBoundedContext context;
-    ProjectionFactory factory;
+    ApplicationProjectionFactory factory;
     TimeTrakrApp widget;
     TimeTrakrAppState state;
     setUp(() {
       context = ActivityBoundedContextMock();
-      factory = ProjectionFactoryMock();
+      factory = TimeTrakrProjectionFactoryMock();
       widget = TimeTrakrApp(
           boundedContext: context,
           projectionFactory: factory,

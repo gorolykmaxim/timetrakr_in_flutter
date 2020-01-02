@@ -9,10 +9,8 @@ import 'package:timetrakr_in_flutter/src/model.dart';
 import 'package:timetrakr_in_flutter/src/persistence.dart';
 import 'package:timetrakr_in_flutter/src/query.dart';
 
-import 'common.dart';
-
 void main() {
-  group('ProjectionFactory', () {
+  group('ApplicationProjectionFactory', () {
     final now = DateTime.now();
     final clock = Clock.fixed(now);
     final today = DateTime(now.year, now.month, now.day);
@@ -25,14 +23,14 @@ void main() {
     ImmutableCollection<StartedActivity> startedActivities;
     StreamController controller;
     ObservableEventStream<Specification> observableEventStream;
-    ProjectionFactory factory;
+    ApplicationProjectionFactory factory;
     setUp(() {
       controller = StreamController<Event<Specification>>.broadcast();
       observableEventStream = ObservableEventStream(controller);
       startedActivities = SimpleCollectionMock();
       when(startedActivities.findAll(specification))
           .thenAnswer((_) => Future.value(expectedActivities));
-      factory = ProjectionFactory(startedActivities, observableEventStream, clock);
+      factory = ApplicationProjectionFactory(startedActivities, observableEventStream, clock);
     });
     tearDown(() {
       controller.close();

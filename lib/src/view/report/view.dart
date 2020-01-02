@@ -14,7 +14,7 @@ import 'list.dart';
 import 'selected_duration.dart';
 
 class ActivitiesReportView extends StatefulWidget {
-  final ProjectionFactory projectionFactory;
+  final ApplicationProjectionFactory projectionFactory;
   final DurationFormat durationFormat;
   final Clock clock;
 

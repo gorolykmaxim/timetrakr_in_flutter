@@ -21,6 +21,6 @@ void main() async {
   await persistence.initialize();
   final startedActivities = activityPersistence.getStartedActivities();
   final boundedContext = ActivityBoundedContext(startedActivities, events, clock);
-  final projectionFactory = ProjectionFactory(startedActivities, events, clock);
+  final projectionFactory = ApplicationProjectionFactory(startedActivities, events, clock);
   runApp(TimeTrakrApp(boundedContext: boundedContext, projectionFactory: projectionFactory, clock: clock));
 }

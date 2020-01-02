@@ -12,7 +12,7 @@ import 'report/view.dart';
 
 class TimeTrakrApp extends StatefulWidget {
   final ActivityBoundedContext boundedContext;
-  final ProjectionFactory projectionFactory;
+  final ApplicationProjectionFactory projectionFactory;
   final DateFormat dateFormat = DateFormat("HH:mm");
   final DurationFormat durationFormat = DurationFormat.hoursAndMinutes();
   final Clock clock;

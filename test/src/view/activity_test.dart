@@ -30,7 +30,7 @@ void main() {
     final activity = StartedActivity('doing nothing', now.subtract(Duration(hours: 8)));
     ActivityBoundedContext context;
     Projection<Specification, List<StartedActivity>> projection;
-    ProjectionFactory factory;
+    ApplicationProjectionFactory factory;
     ScaffoldState scaffoldState;
     StartedActivitiesViewController controller;
     StartedActivitiesView widget;
@@ -38,7 +38,7 @@ void main() {
     setUp(() {
       context = ActivityBoundedContextMock();
       projection = ProjectionMock();
-      factory = ProjectionFactoryMock();
+      factory = TimeTrakrProjectionFactoryMock();
       scaffoldState = ScaffoldStateMock();
       when(factory.findActivitiesStartedToday()).thenReturn(projection);
       when(context.startNewActivity(any, any)).thenAnswer((_) => Future.value(null));

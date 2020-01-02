@@ -22,7 +22,7 @@ class StartedActivitiesViewController {
 
 class StartedActivitiesView extends StatefulWidget {
   final ActivityBoundedContext boundedContext;
-  final ProjectionFactory projectionFactory;
+  final ApplicationProjectionFactory projectionFactory;
   final StartedActivitiesViewController controller;
   final DateFormat dateFormat;
   final Clock clock;

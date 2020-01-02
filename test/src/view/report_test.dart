@@ -18,7 +18,7 @@ void main() {
     final clock = Clock.fixed(now);
     final stateDouble = StateDouble();
     Projection<Specification, ActivitiesDurationReport> projection;
-    ProjectionFactory factory;
+    ApplicationProjectionFactory factory;
     ActivitiesReportView widget;
     ActivitiesReportViewState state;
     final activities = [
@@ -29,7 +29,7 @@ void main() {
     final activityDuration = report.getActivityDurations(now).first;
     setUp(() {
       projection = ProjectionMock();
-      factory = ProjectionFactoryMock();
+      factory = TimeTrakrProjectionFactoryMock();
       when(projection.stream).thenAnswer((_) => Stream.empty());
       when(factory.getTodaysActivitiesDurationReport()).thenReturn(projection);
       widget = ActivitiesReportView(projectionFactory: factory, clock: clock);
