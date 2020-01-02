@@ -18,7 +18,11 @@ class ActivitiesReportView extends StatefulWidget {
   final DurationFormat durationFormat;
   final Clock clock;
 
-  ActivitiesReportView({@required this.projectionFactory, @required this.clock, this.durationFormat});
+  ActivitiesReportView({
+    @required this.projectionFactory,
+    @required this.clock,
+    this.durationFormat
+  });
 
   @override
   State<StatefulWidget> createState() {

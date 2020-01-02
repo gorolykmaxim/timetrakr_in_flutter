@@ -17,7 +17,11 @@ class TimeTrakrApp extends StatefulWidget {
   final DurationFormat durationFormat = DurationFormat.hoursAndMinutes();
   final Clock clock;
 
-  TimeTrakrApp({@required this.boundedContext, @required this.projectionFactory, @required this.clock});
+  TimeTrakrApp({
+    @required this.boundedContext,
+    @required this.projectionFactory,
+    @required this.clock
+  });
 
   @override
   State<StatefulWidget> createState() {
@@ -28,7 +32,7 @@ class TimeTrakrApp extends StatefulWidget {
 class TimeTrakrAppState extends State<TimeTrakrApp> {
   int currentViewIndex = 0;
   List<Widget> views;
-  final StartedActivitiesViewController controller = StartedActivitiesViewController();
+  final controller = StartedActivitiesViewController();
 
   void initialize(TimeTrakrApp widget) {
     views = [

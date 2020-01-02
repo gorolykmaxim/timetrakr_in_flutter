@@ -10,8 +10,12 @@ class StartActivityBottomSheetDialog extends StatefulWidget {
   final DateTime startDate;
   final DateFormat dateFormat;
 
-  StartActivityBottomSheetDialog({this.onStartActivity, this.activityName, @required this.startDate, DateFormat dateFormat}):
-        this.dateFormat = dateFormat ?? DateFormat();
+  StartActivityBottomSheetDialog({
+    this.onStartActivity,
+    this.activityName,
+    @required this.startDate,
+    DateFormat dateFormat
+  }) : this.dateFormat = dateFormat ?? DateFormat();
 
   @override
   State<StatefulWidget> createState() {
@@ -52,13 +56,7 @@ class StartActivityBottomSheetDialogState extends State<StartActivityBottomSheet
     );
     if (time != null) {
       state.setState(() {
-        startDate = DateTime(
-            startDate.year,
-            startDate.month,
-            startDate.day,
-            time.hour,
-            time.minute
-        );
+        startDate = DateTime(startDate.year, startDate.month, startDate.day, time.hour, time.minute);
       });
     }
   }

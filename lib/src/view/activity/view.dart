@@ -27,9 +27,14 @@ class StartedActivitiesView extends StatefulWidget {
   final DateFormat dateFormat;
   final Clock clock;
 
-  StartedActivitiesView({@required this.boundedContext, @required this.projectionFactory, @required this.clock, DateFormat dateFormat, StartedActivitiesViewController controller}):
-        this.controller = controller ?? StartedActivitiesViewController(),
-        this.dateFormat = dateFormat ?? DateFormat();
+  StartedActivitiesView({
+    @required this.boundedContext,
+    @required this.projectionFactory,
+    @required this.clock,
+    DateFormat dateFormat,
+    StartedActivitiesViewController controller
+  }): this.controller = controller ?? StartedActivitiesViewController(),
+      this.dateFormat = dateFormat ?? DateFormat();
 
   @override
   State<StatefulWidget> createState() {

@@ -9,8 +9,12 @@ class ActivityDurationList extends StatelessWidget {
   final Iterable<String> selectedActivities;
   final DurationFormat durationFormatter;
 
-  ActivityDurationList({@required this.activityDurations, this.onActivityDurationClicked, Iterable<String> selectedActivities, this.durationFormatter}):
-        this.selectedActivities = selectedActivities ?? [];
+  ActivityDurationList({
+    @required this.activityDurations,
+    this.onActivityDurationClicked,
+    Iterable<String> selectedActivities,
+    this.durationFormatter
+  }) : this.selectedActivities = selectedActivities ?? [];
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +37,12 @@ class ActivityDurationItem extends StatelessWidget {
   final DurationFormat durationFormat;
   final bool isSelected;
 
-  ActivityDurationItem({@required this.activityDuration, DurationFormat durationFormat, this.isSelected = false, this.onActivityDurationClicked}):
-        this.durationFormat = durationFormat ?? DurationFormat.hoursAndMinutes();
+  ActivityDurationItem({
+    @required this.activityDuration,
+    DurationFormat durationFormat,
+    this.isSelected = false,
+    this.onActivityDurationClicked
+  }) : this.durationFormat = durationFormat ?? DurationFormat.hoursAndMinutes();
 
   void _handleTap() {
     if (onActivityDurationClicked != null) {

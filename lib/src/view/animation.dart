@@ -17,8 +17,7 @@ class FloatUpAnimation extends StatefulWidget {
   }
 }
 
-class FloatUpAnimationState extends State<FloatUpAnimation>
-    with SingleTickerProviderStateMixin {
+class FloatUpAnimationState extends State<FloatUpAnimation> with SingleTickerProviderStateMixin {
   AnimationController controller;
 
   FloatUpAnimationState(Duration duration) {

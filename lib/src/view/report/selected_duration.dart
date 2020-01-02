@@ -10,8 +10,8 @@ class SelectedDuration extends StatelessWidget {
   SelectedDuration({
     @required this.totalDuration,
     this.onRemoveSelection,
-    DurationFormat durationFormat})
-      : this.durationFormat = durationFormat ?? DurationFormat.hoursAndMinutes();
+    DurationFormat durationFormat
+  }) : this.durationFormat = durationFormat ?? DurationFormat.hoursAndMinutes();
 
   @override
   Widget build(BuildContext context) {

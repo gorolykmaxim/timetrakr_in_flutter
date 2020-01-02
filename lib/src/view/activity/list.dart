@@ -14,7 +14,12 @@ class StartedActivitiesListView extends StatelessWidget {
   final DateFormat dateFormat;
   final SlidableController slidableController = SlidableController();
 
-  StartedActivitiesListView({@required this.startedActivitiesStream, @required this.onProlong, @required this.onDelete, this.dateFormat});
+  StartedActivitiesListView({
+    @required this.startedActivitiesStream,
+    @required this.onProlong,
+    @required this.onDelete,
+    this.dateFormat
+  });
 
   Widget _buildItem(StartedActivity activity, int index, BuildContext context, Animation<double> animation) {
     return SizeTransition(
@@ -64,8 +69,13 @@ class StartedActivityListItem extends StatelessWidget {
   final OnActivityChange onProlong, onDelete;
   final SlidableController controller;
 
-  StartedActivityListItem({@required this.startedActivity, @required this.onProlong, @required this.onDelete, DateFormat dateFormat, this.controller}):
-        this.dateFormat = dateFormat ?? DateFormat();
+  StartedActivityListItem({
+    @required this.startedActivity,
+    @required this.onProlong,
+    @required this.onDelete,
+    DateFormat dateFormat,
+    this.controller
+  }): this.dateFormat = dateFormat ?? DateFormat();
 
   @override
   Widget build(BuildContext context) {

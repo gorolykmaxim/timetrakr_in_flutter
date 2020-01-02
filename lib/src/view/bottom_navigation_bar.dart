@@ -4,7 +4,10 @@ class TimeTrakrBottomNavigationBar extends StatelessWidget {
   final ValueChanged<int> onCurrentViewChange;
   final int currentIndex;
 
-  TimeTrakrBottomNavigationBar({this.onCurrentViewChange, this.currentIndex = 0});
+  TimeTrakrBottomNavigationBar({
+    this.onCurrentViewChange,
+    this.currentIndex = 0
+  });
 
   @override
   Widget build(BuildContext context) {
