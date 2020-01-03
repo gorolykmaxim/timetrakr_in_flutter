@@ -3,12 +3,22 @@ import 'package:flutter/material.dart';
 import '../../duration.dart';
 import '../../model.dart';
 
+/// Callback called when user clicks on one of activity durations.
+typedef OnActivityDurationClicked = void Function(ActivityDuration activityDuration);
+
+/// Displays list of [ActivityDuration]s and allows selecting individual
+/// activity durations.
 class ActivityDurationList extends StatelessWidget {
   final Iterable<ActivityDuration> activityDurations;
   final OnActivityDurationClicked onActivityDurationClicked;
   final Iterable<String> selectedActivities;
   final DurationFormat durationFormat;
 
+  /// Create a list of [activityDurations]. Activities with names, that are
+  /// present in [selectedActivities], will be highlighted as selected.
+  /// Durations of activities will be formatted in [durationFormat].
+  /// [onActivityDurationClicked] will get called when user will click
+  /// on one of activities durations displayed.
   ActivityDurationList({
     @required this.activityDurations,
     this.onActivityDurationClicked,
@@ -29,14 +39,20 @@ class ActivityDurationList extends StatelessWidget {
   }
 }
 
-typedef OnActivityDurationClicked = void Function(ActivityDuration activityDuration);
-
+/// Displays individual [ActivityDuration] and allows selecting and de-selecting
+/// it.
 class ActivityDurationItem extends StatelessWidget {
   final OnActivityDurationClicked onActivityDurationClicked;
   final ActivityDuration activityDuration;
   final DurationFormat durationFormat;
   final bool isSelected;
 
+  /// Display [activityDuration] while formatting it's duration in
+  /// [durationFormat].
+  /// If [isSelected] is set to true, then the activity duration will be
+  /// displayed as selected.
+  /// [onActivityDurationClicked] will get called if this activity duration
+  /// get's clicked by the user.
   ActivityDurationItem({
     @required this.activityDuration,
     DurationFormat durationFormat,

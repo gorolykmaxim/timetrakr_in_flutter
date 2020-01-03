@@ -13,11 +13,22 @@ import '../animation.dart';
 import 'list.dart';
 import 'selected_duration.dart';
 
+/// View that displays durations of all activities, that were started today.
+/// It allows selecting and deselecting activities to display total duration
+/// of all selected activities in a card, that floats up when activities get
+/// selected and floats down, when activities get de-selected.
+/// The view updates itself every minute to always display up-to-date durations
+/// of activities on the screen.
 class ActivitiesReportView extends StatefulWidget {
   final ApplicationProjectionFactory projectionFactory;
   final DurationFormat durationFormat;
   final Clock clock;
 
+  /// Creates view, that will obtain a projection of todays activity durations
+  /// report using [projectionFactory] and will display list of it's activities
+  /// and their durations, while formatting the latter ones in [durationFormat].
+  /// The view will use [clock] to determine current time, which will be used
+  /// to determine durations of started activities.
   ActivitiesReportView({
     @required this.projectionFactory,
     @required this.clock,
@@ -133,6 +144,7 @@ class ActivitiesReportViewState extends State<ActivitiesReportView> {
   }
 }
 
+/// Displays title of [ActivitiesReportView].
 class ActivitiesReportHeading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -146,6 +158,8 @@ class ActivitiesReportHeading extends StatelessWidget {
   }
 }
 
+/// A placeholder, that will be displayed in [ActivitiesReportView] if there
+/// are no activity durations to display.
 class EmptyReport extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
