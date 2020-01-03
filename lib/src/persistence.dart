@@ -3,6 +3,7 @@ import 'package:flutter_repository_sqflite/flutter_repository_sqflite.dart';
 
 import 'model.dart';
 
+/// [DataSourceServant] of [StartedActivity].
 class StartedActivityDataSourceServant implements DataSourceServant<StartedActivity> {
   @override
   StartedActivity deserialize(Map<String, dynamic> entity) {
@@ -24,12 +25,14 @@ class StartedActivityDataSourceServant implements DataSourceServant<StartedActiv
   }
 }
 
+/// Persistence of [StartedActivity].
 class ActivityPersistence implements Persistence {
   static final _tableName = 'StartedActivity';
   static final name = 'name';
   static final startDate = 'startDate';
   SqfliteDatabase _database;
 
+  /// Return collection of [StartedActivity]s, stored in the database.
   Collection<StartedActivity> getStartedActivities() {
     assert(_database != null, 'Initialize ApplicationPersistence before calling this method');
     final servant = StartedActivityDataSourceServant();
@@ -52,10 +55,15 @@ class ActivityPersistence implements Persistence {
   }
 }
 
+/// Factory of all possible specifications, related to [StartedActivity].
 class ActivitySpecification {
+  /// Create a specification, that describes all [StartedActivity]s,
+  /// started at [dateTime].
   static Specification startedAt(DateTime dateTime) {
     return Specification().equals(ActivityPersistence.startDate, dateTime.millisecondsSinceEpoch);
   }
+  /// Create a specification, that describes all [StartedActivity]s,
+  /// started after [dateTime].
   static Specification startedAfter(DateTime dateTime) {
     return Specification()
         .greaterThan(ActivityPersistence.startDate, dateTime.millisecondsSinceEpoch)
