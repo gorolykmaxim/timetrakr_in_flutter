@@ -24,6 +24,7 @@ dependencies:
   cupertino_icons: ^0.1.2
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.7.4
   mockito: ^4.1.1
   sqflite: ^1.1.7+1
   flutter_test:
@@ -31,3 +32,11 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+flutter_icons:
+  ios: true
+  android: true
+  image_path_ios: "assets/launcher/launcher_icon_default.png"
+  image_path_android: "assets/launcher/launcher_icon_default.png"
+  adaptive_icon_background: "assets/launcher/launcher_icon_back.png"
+  adaptive_icon_foreground: "assets/launcher/launcher_icon_front.png"
