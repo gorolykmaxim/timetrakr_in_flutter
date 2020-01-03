@@ -8,7 +8,10 @@ import 'persistence.dart';
 
 const _iterableEquals = const IterableEquality();
 
+/// Base class for all exceptions, related to operations, done on activities.
 abstract class ActivityStartException implements Exception {
+  /// Return message of this exception, while using [dateFormat] for all
+  /// dates, described in this exception.
   String format(DateFormat dateFormat);
 
   @override
@@ -17,13 +20,20 @@ abstract class ActivityStartException implements Exception {
   }
 }
 
+/// Generic error, that can occur when starting a new activity or removing
+/// an existing one. This kind of exception indicates problems with
+/// the collection, that stores started activities.
 class ActivityStartModificationException extends ActivityStartException {
   final String name;
   final DateTime startDate;
   final String operation;
   final Object cause;
 
+  /// Create exception, that describes a failed attempt to start activity
+  /// with [name] at [startDate] due to [cause].
   ActivityStartModificationException.create(this.name, this.startDate, this.cause): operation = 'start activity';
+  /// Create exception, that describes a failed attempt to remove activity
+  /// with [name] started at [startDate], which occurred due to [cause].
   ActivityStartModificationException.remove(this.name, this.startDate, this.cause): operation = 'remove start of activity';
 
   @override
@@ -32,10 +42,14 @@ class ActivityStartModificationException extends ActivityStartException {
   }
 }
 
+/// Error that can happen when a new activity is started, length of name of
+/// which is shorter than the specified value.
 class NewActivityNameIsTooShortException extends ActivityStartException {
   final String name;
   final int expectedMinimalLength;
 
+  /// Create exception, that indicates that activity [name] is shorter than
+  /// the [expectedMinimalLength].
   NewActivityNameIsTooShortException(this.name, this.expectedMinimalLength);
 
   @override
@@ -44,9 +58,16 @@ class NewActivityNameIsTooShortException extends ActivityStartException {
   }
 }
 
+/// Error that can happen when a new activity is started with start date
+/// set after current time.
+/// Activity can be started in past, since the thing happened in the past
+/// is a fact. Activity can't be started in advance since you can never
+/// be sure about what can happen in a coming moment.
 class StartActivityInFutureException extends ActivityStartException {
   final DateTime currentDate, specifiedDate;
 
+  /// Create exception, that indicates that activity was started with
+  /// [specifiedDate], which is greater than [currentDate].
   StartActivityInFutureException(this.currentDate, this.specifiedDate);
 
   @override
@@ -55,9 +76,14 @@ class StartActivityInFutureException extends ActivityStartException {
   }
 }
 
+/// Error that can happen when a new activity is started at the exact same
+/// time another activity has been started.
+/// We assume that a user can't work on two different tasks at the same time.
 class AnotherActivityAlreadyStartedException extends ActivityStartException {
   final StartedActivity anotherActivity;
 
+  /// Create exceptions, that indicates that there was an attempt to start
+  /// an activity at the same time when [anotherActivity] has been started.
   AnotherActivityAlreadyStartedException(this.anotherActivity);
 
   @override
@@ -66,12 +92,23 @@ class AnotherActivityAlreadyStartedException extends ActivityStartException {
   }
 }
 
+/// Factory of [StartedActivity].
 class StartedActivityFactory {
   static final int expectedMinimalNameLength = 3;
   final Clock _clock;
 
+  /// Create factory of started activities, that will start new activities
+  /// with a start date, dictated by the current time, displayed by [_clock].
   StartedActivityFactory(this._clock);
 
+  /// Start new activity with [name].
+  ///
+  /// The activity will be started at [startDate] if the latter one is
+  /// specified. Otherwise - activity will be started at the current time.
+  /// [startDate] should not be set to future (e.g. greater than current time).
+  ///
+  /// [name] of started activity should be longer than
+  /// [expectedMinimalNameLength].
   StartedActivity create(String name, {DateTime startDate}) {
     final now = _clock.now();
     if (startDate == null) {
@@ -86,12 +123,14 @@ class StartedActivityFactory {
   }
 }
 
+/// An activity, started by user at some point in time.
 class StartedActivity {
   final String name;
   final DateTime startDate;
 
+  /// Create started activity, that has a [name] and was started at [startDate].
   StartedActivity(this.name, this.startDate);
-
+  /// Calculate duration of this activity if it would have ended at [endDate].
   ActivityDuration getDurationBeforeEndingAt(DateTime endDate) => ActivityDuration(name, endDate.difference(startDate));
 
   @override
@@ -113,22 +152,37 @@ class StartedActivity {
   }
 }
 
+/// Event that indicates that a new activity has been started.
 class ActivityStartedEvent extends Event<Specification> {
+  /// Create activity start event.
   ActivityStartedEvent() : super(ActivityStartedEvent, {});
 }
 
+/// Event that indicates that an existing activity has been removed.
 class ActivityRemovedEvent extends Event<Specification> {
   ActivityRemovedEvent(): super(ActivityRemovedEvent, {});
 }
 
+/// Bounded context of activity domain model. Acts as a facade to all business
+/// logic, related to activities.
 class ActivityBoundedContext {
   final StartedActivityFactory _activityFactory;
   final Collection<StartedActivity> _startedActivities;
   final EventStream<Specification> _events;
 
+  /// Create bounded context, that will store activities in [_startedActivities],
+  /// publish events about operations, performed on activities, onto [_events].
+  /// [clock] will be used in all operations to determine current time.
   ActivityBoundedContext(this._startedActivities, this._events, Clock clock):
         _activityFactory = StartedActivityFactory(clock);
 
+  /// Start a new activity with [activityName] at [startDate].
+  /// In addition to constraints in regards of [StartedActivity] creation (
+  /// which are described in it's factory: [StartedActivityFactory]),
+  /// an activity can't be started at the same time another activity have
+  /// been started.
+  /// This operation will create a new [StartedActivity], save it and publish
+  /// [ActivityStartedEvent].
   Future<void> startNewActivity(String activityName, DateTime startDate) async {
     try {
       final activitiesStartedAtThisTime = ActivitySpecification.startedAt(startDate);
@@ -143,6 +197,9 @@ class ActivityBoundedContext {
     }
   }
 
+  /// Remove the fact, that [activity] has been started, from history.
+  /// This operation will remove [activity] from it's collection and publish
+  /// [ActivityRemovedEvent].
   Future<void> removeActivity(StartedActivity activity) async {
     try {
       await _startedActivities.removeOne(activity);
@@ -153,12 +210,16 @@ class ActivityBoundedContext {
   }
 }
 
+/// Amount of time a user spent on an activity.
 class ActivityDuration {
   final String activityName;
   final Duration duration;
 
+  /// Create a [duration] of activity with [activityName].
   ActivityDuration(this.activityName, this.duration);
 
+  /// Prolong duration of this activity by the specified [duration] and
+  /// return resulting activity duration.
   ActivityDuration prolongBy(Duration duration) => ActivityDuration(activityName, this.duration + duration);
 
   @override
@@ -180,9 +241,13 @@ class ActivityDuration {
   }
 }
 
+/// A report on who much time a user has spent on each of their's activities.
 class ActivitiesDurationReport {
   final List<StartedActivity> _startedActivities;
 
+  /// Create a duration report from a list of [_startedActivities], that are
+  /// ordered in their chronological order from the oldest activity started,
+  /// to the latest one.
   ActivitiesDurationReport.fromActivitiesInChronologicalOrder(this._startedActivities);
 
   Iterable<ActivityDuration> _getActivityDurations(DateTime time) {
@@ -208,11 +273,34 @@ class ActivitiesDurationReport {
     }
     return activityNameToDuration.values;
   }
-
+  /// Get list of all activities, on which a user have been working at [time],
+  /// and their durations.
+  ///
+  /// Each activity is presented in this list only once, meaning if one
+  /// activity had been interrupted by another activity and then has resumed -
+  /// returned list will display total duration of that activity.
+  ///
+  /// The report will not consider activities, that took less than one minute:
+  /// such activities will be omitted.
+  ///
+  /// All the activities will be returned in the order in which they were
+  /// started for the first time.
   Iterable<ActivityDuration> getActivityDurations(DateTime time) => _getActivityDurations(time).where((a) => a.duration.inMinutes > 1);
 
+  /// Check if according to this report a user has been working on any
+  /// activities at [time].
+  ///
+  /// Only those activities, that took more than 1 minute, are considered.
   bool isEmptyAt(DateTime time) => getActivityDurations(time).isEmpty;
 
+  /// Check on which activities the user has been working at [time] and return
+  /// a total duration of those of them, that have a name, that is present in
+  /// [activities] list.
+  ///
+  /// Activities that took less than 1 minute will not be considered.
+  ///
+  /// This method will ignore those of [activities] that are not present in
+  /// this report.
   Duration totalDurationOf(Iterable<String> activities, DateTime time) {
     final durations = getActivityDurations(time)
         .where((ad) => activities.contains(ad.activityName))
