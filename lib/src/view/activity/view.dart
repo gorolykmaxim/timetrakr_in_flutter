@@ -10,16 +10,31 @@ import '../error.dart';
 import 'bottom_sheet_dialog.dart';
 import 'list.dart';
 
+/// Callback called when user requests a possibility to start a new activity
+/// (open new activity start dialog for instance).
 typedef OnRequestNewActivityStart = void Function(BuildContext context);
 
+/// Controller that allows users of [StartedActivitiesView] to request opening
+/// of a new activity start dialog from outside.
 class StartedActivitiesViewController {
   OnRequestNewActivityStart onRequestNewActivityStart = (context) {};
 
+  /// Display new activity start dialog in [StartedActivitiesView].
   void requestNewActivityStart(BuildContext context) {
     onRequestNewActivityStart(context);
   }
 }
 
+/// View, that displays activities, the a user has started today.
+/// The view allows to view all todays user's activities, starting new
+/// activities, prolonging existing started activities, and removing
+/// start activity events.
+/// When a user will try to start a new activity by using
+/// [StartedActivitiesViewController] - a bottom sheet dialog will be opened,
+/// where user would have to enter information about the activity being started.
+/// The same dialog will be used to prolong existing activities.
+/// Existing activities can be prolonged and removed by swiping them to the left
+/// or to the right correspondingly.
 class StartedActivitiesView extends StatefulWidget {
   final ActivityBoundedContext boundedContext;
   final ApplicationProjectionFactory projectionFactory;
@@ -27,6 +42,15 @@ class StartedActivitiesView extends StatefulWidget {
   final DateFormat dateFormat;
   final Clock clock;
 
+  /// Create view, that will display all activities, user has started today.
+  /// Activities will be started and delete via [boundedContext].
+  /// [projectionFactory] will be used to obtain a projection of a list
+  /// of todays activities.
+  /// [clock] will be used to determine current time while trying to start
+  /// or prolong an activity.
+  /// [dateFormat] will be used to format activity start dates, being displayed.
+  /// If you want to trigger new activity start dialog externally - pass
+  /// [controller] and use it to do so.
   StartedActivitiesView({
     @required this.boundedContext,
     @required this.projectionFactory,

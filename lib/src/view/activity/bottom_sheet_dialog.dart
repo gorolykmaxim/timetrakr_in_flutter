@@ -2,14 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_commons/flutter_commons.dart';
 import 'package:intl/intl.dart';
 
+/// Callback, called by [StartActivityBottomSheetDialog] when user starts
+/// new activity.
 typedef OnStartActivity = void Function(String name, DateTime startDate);
 
+/// Bottom sheet dialog, that allows user to start a new activity.
 class StartActivityBottomSheetDialog extends StatefulWidget {
   final OnStartActivity onStartActivity;
   final String activityName;
   final DateTime startDate;
   final DateFormat dateFormat;
 
+  /// Create a bottom sheet dialog, that allows user to star a new activity.
+  /// [onStartActivity] will be called when user finishes defining activity
+  /// properties.
+  /// If you want to display a predefined activity name when the dialog pops up,
+  /// specify it via [activityName].
+  /// New activity will be started at [startDate], which will be formatted in
+  /// the widget using [dateFormat].
   StartActivityBottomSheetDialog({
     this.onStartActivity,
     this.activityName,
