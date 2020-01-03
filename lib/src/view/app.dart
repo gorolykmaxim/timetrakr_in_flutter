@@ -10,6 +10,7 @@ import 'activity/view.dart';
 import 'bottom_navigation_bar.dart';
 import 'report/view.dart';
 
+/// Root time trakr widget. Displays entire application.
 class TimeTrakrApp extends StatefulWidget {
   final ActivityBoundedContext boundedContext;
   final ApplicationProjectionFactory projectionFactory;
@@ -17,6 +18,11 @@ class TimeTrakrApp extends StatefulWidget {
   final DurationFormat durationFormat = DurationFormat.hoursAndMinutes();
   final Clock clock;
 
+  /// Create time trakr application widget.
+  /// [boundedContext] will be used to start and remove activities.
+  /// [projectionFactory] will be used to creates projections to obtain
+  /// lists of todays started activities and their durations.
+  /// Information about current time will be obtained using [clock].
   TimeTrakrApp({
     @required this.boundedContext,
     @required this.projectionFactory,
