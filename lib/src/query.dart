@@ -43,16 +43,27 @@ class _GetTodaysActivitiesDurationReport implements Query<Specification, Activit
   }
 }
 
+/// Factory of all possible application's projections.
 class ApplicationProjectionFactory extends ProjectionFactory<Specification> {
   final ImmutableCollection<StartedActivity> _startedActivities;
   final Clock _clock;
 
+  /// Create projection factory, that will be executing created queries
+  /// against [_startedActivities], while using [_clock] to determine current
+  /// time.
+  /// All projections, initialized by this factory, will be listening to events
+  /// from [eventStream].
   ApplicationProjectionFactory(this._startedActivities, ObservableEventStream<Specification> eventStream, this._clock): super(eventStream);
 
+  /// Create projection, that will look for all activities, started after
+  /// today's midnight, when either a new activity starts or an existing
+  /// activities gets removed.
   Projection<Specification, List<StartedActivity>> findActivitiesStartedToday() {
     return create(_FindActivitiesStartedToday(_startedActivities, _clock), [ActivityStartedEvent, ActivityRemovedEvent]);
   }
 
+  /// Create projection, that will form report about durations of all activities,
+  /// that were started today (after today's midnight).
   Projection<Specification, ActivitiesDurationReport> getTodaysActivitiesDurationReport() {
     return create(_GetTodaysActivitiesDurationReport(_startedActivities, _clock), [ActivityStartedEvent, ActivityRemovedEvent]);
   }
