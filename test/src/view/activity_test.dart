@@ -9,7 +9,6 @@ import 'package:mockito/mockito.dart';
 import 'package:timetrakr_in_flutter/src/model.dart';
 import 'package:timetrakr_in_flutter/src/query.dart';
 import 'package:timetrakr_in_flutter/src/view/activity/view.dart';
-import 'package:timetrakr_in_flutter/src/view/error.dart';
 
 import '../common.dart';
 import 'app_test.dart';
