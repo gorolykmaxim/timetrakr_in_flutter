@@ -1,7 +1,14 @@
+/// Format in which a [Duration] can be displayed.
 abstract class DurationFormat {
+  /// Create format to display durations like:
+  /// "15h 20m". Only hours and minutes will get displayed.
+  /// Duration will get rounded to the higher value:
+  /// duration of 5 minutes and 15 seconds will be displayed as "6m".
   factory DurationFormat.hoursAndMinutes() {
     return _HourAndMinutesDurationFormat();
   }
+  /// Return string representation of [duration] according to this specific
+  /// format.
   String applyTo(Duration duration);
 }
 
