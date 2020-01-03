@@ -7,13 +7,13 @@ class ActivityDurationList extends StatelessWidget {
   final Iterable<ActivityDuration> activityDurations;
   final OnActivityDurationClicked onActivityDurationClicked;
   final Iterable<String> selectedActivities;
-  final DurationFormat durationFormatter;
+  final DurationFormat durationFormat;
 
   ActivityDurationList({
     @required this.activityDurations,
     this.onActivityDurationClicked,
     Iterable<String> selectedActivities,
-    this.durationFormatter
+    this.durationFormat
   }) : this.selectedActivities = selectedActivities ?? [];
 
   @override
@@ -21,7 +21,7 @@ class ActivityDurationList extends StatelessWidget {
     final activityDurationWidgets = activityDurations
         .map((a) => ActivityDurationItem(
           activityDuration: a,
-          durationFormat: durationFormatter,
+          durationFormat: durationFormat,
           isSelected: selectedActivities.contains(a.activityName),
           onActivityDurationClicked: onActivityDurationClicked))
         .toList();

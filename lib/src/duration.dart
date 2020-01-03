@@ -1,11 +1,11 @@
 abstract class DurationFormat {
   factory DurationFormat.hoursAndMinutes() {
-    return _HourAndMinutesDurationFormatter();
+    return _HourAndMinutesDurationFormat();
   }
   String applyTo(Duration duration);
 }
 
-class _HourAndMinutesDurationFormatter implements DurationFormat {
+class _HourAndMinutesDurationFormat implements DurationFormat {
   @override
   String applyTo(Duration duration) {
     final result = <String>[];

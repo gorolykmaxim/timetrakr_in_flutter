@@ -99,7 +99,7 @@ class ActivitiesReportViewState extends State<ActivitiesReportView> {
               Flexible(child: ActivityDurationList(
                 activityDurations: report.getActivityDurations(now),
                 selectedActivities: selectedActivities,
-                durationFormatter: widget.durationFormat,
+                durationFormat: widget.durationFormat,
                 onActivityDurationClicked: (activityDuration) => handleItemClicked(this, activityDuration),
               ))
             ],
