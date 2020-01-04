@@ -92,6 +92,7 @@ class StartActivityBottomSheetDialogState extends State<StartActivityBottomSheet
           child: Column(
             children: <Widget>[
               TextField(
+                autofocus: true,
                 controller: controller,
                 decoration: InputDecoration.collapsed(
                     hintText: 'What task are you working on?'
