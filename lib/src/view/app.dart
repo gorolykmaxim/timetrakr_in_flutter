@@ -37,35 +37,12 @@ class TimeTrakrApp extends StatefulWidget {
 
 class TimeTrakrAppState extends State<TimeTrakrApp> {
   int currentViewIndex = 0;
-  List<Widget> views;
   final controller = StartedActivitiesViewController();
-
-  void initialize(TimeTrakrApp widget) {
-    views = [
-      StartedActivitiesView(
-        boundedContext: widget.boundedContext,
-        projectionFactory: widget.projectionFactory,
-        clock: widget.clock,
-        controller: controller,
-        dateFormat: widget.dateFormat,
-      ),
-      ActivitiesReportView(
-        projectionFactory: widget.projectionFactory,
-        durationFormat: widget.durationFormat,
-        clock: widget.clock,
-      )
-    ];
-  }
 
   void changeCurrentView(State state, int newViewIndex) {
     state.setState(() {
       currentViewIndex = newViewIndex;
     });
-  }
-
-  @override
-  void initState() {
-    initialize(widget);
   }
 
   @override
@@ -87,7 +64,23 @@ class TimeTrakrAppState extends State<TimeTrakrApp> {
       ),
       home: Scaffold(
         backgroundColor: Colors.grey.shade200,
-        body: IndexedStack(children: views, index: currentViewIndex),
+        body: IndexedStack(
+            children: <Widget>[
+              StartedActivitiesView(
+                boundedContext: widget.boundedContext,
+                projectionFactory: widget.projectionFactory,
+                clock: widget.clock,
+                controller: controller,
+                dateFormat: widget.dateFormat,
+              ),
+              ActivitiesReportView(
+                projectionFactory: widget.projectionFactory,
+                durationFormat: widget.durationFormat,
+                clock: widget.clock,
+              )
+            ],
+            index: currentViewIndex
+        ),
         floatingActionButton: floatingActionButton,
         bottomNavigationBar: TimeTrakrBottomNavigationBar(
           currentIndex: currentViewIndex,

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:clock/clock.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_commons/flutter_commons.dart';
 import 'package:flutter_event_projections/flutter_event_projections.dart';
 import 'package:flutter_repository/flutter_repository.dart';
@@ -12,11 +13,14 @@ import 'package:timetrakr_in_flutter/src/view/report/view.dart';
 
 import '../common.dart';
 
+class WidgetsBindingMock extends Mock implements WidgetsBinding {}
+
 void main() {
   group('ActivitiesReportViewState', () {
     final now = DateTime.now();
     final clock = Clock.fixed(now);
     final stateDouble = StateDouble();
+    WidgetsBinding binding;
     Projection<Specification, ActivitiesDurationReport> projection;
     ApplicationProjectionFactory factory;
     ActivitiesReportView widget;
@@ -28,6 +32,7 @@ void main() {
     final report = ActivitiesDurationReport.fromActivitiesInChronologicalOrder(activities);
     final activityDuration = report.getActivityDurations(now).first;
     setUp(() {
+      binding = WidgetsBindingMock();
       projection = ProjectionMock();
       factory = TimeTrakrProjectionFactoryMock();
       when(projection.stream).thenAnswer((_) => Stream.empty());
@@ -37,7 +42,7 @@ void main() {
     });
     test('creates new projection on initialization', () {
       // when
-      state.initialize(widget);
+      state.initialize(widget, binding);
       // then
       expect(state.todaysActivitiesDurationReportProjection, projection);
     });
@@ -50,30 +55,29 @@ void main() {
       final controller = StreamController<ActivitiesDurationReport>(sync: true);
       when(projection.stream).thenAnswer((_) => controller.stream);
       // when
-      state.initialize(widget);
+      state.initialize(widget, binding);
       controller.add(report);
       // then
       expect(state.selectedActivities, expectedSelectedActivities);
       controller.close();
     });
-    test('triggers UI re-draws every minute to keep duration values on screen '
-        'up-to-date', () {
+    test('starts listening to application lifecycle events on initialization', () {
       // when
-      state.initialize(widget);
+      state.initialize(widget, binding);
       // then
-      expect(state.timeRedrawingTimer.isActive, isTrue);
+      verify(binding.addObserver(state));
     });
-    test('stops UI-redrawing timer on dispose', () {
+    test('stops listening to application lifecycle events on dispose', () {
       // when
-      state.initialize(widget);
-      state.destroy();
+      state.initialize(widget, binding);
+      state.destroy(binding);
       // then
-      expect(state.timeRedrawingTimer.isActive, isFalse);
+      verify(binding.removeObserver(state));
     });
     test('stops projection on dispose', () {
       // when
-      state.initialize(widget);
-      state.destroy();
+      state.initialize(widget, binding);
+      state.destroy(binding);
       // then
       verify(projection.stop());
     });

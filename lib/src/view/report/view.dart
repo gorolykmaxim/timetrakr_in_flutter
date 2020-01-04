@@ -41,21 +41,20 @@ class ActivitiesReportView extends StatefulWidget {
   }
 }
 
-class ActivitiesReportViewState extends State<ActivitiesReportView> {
+class ActivitiesReportViewState extends State<ActivitiesReportView> with WidgetsBindingObserver {
   final Set<String> selectedActivities = Set();
-  Timer timeRedrawingTimer;
   Projection<Specification, ActivitiesDurationReport> todaysActivitiesDurationReportProjection;
 
-  void initialize(ActivitiesReportView widget) {
+  void initialize(ActivitiesReportView widget, WidgetsBinding binding) {
+    binding.addObserver(this);
     todaysActivitiesDurationReportProjection = widget.projectionFactory.getTodaysActivitiesDurationReport();
     todaysActivitiesDurationReportProjection.stream.forEach((report) {
       selectedActivities.retainAll(report.getActivityDurations(widget.clock.now()).map((ad) => ad.activityName));
     });
-    timeRedrawingTimer = Timer.periodic(Duration(minutes: 1), (_) => setState(() {}));
   }
 
-  void destroy() {
-    timeRedrawingTimer?.cancel();
+  void destroy(WidgetsBinding binding) {
+    binding.removeObserver(this);
     todaysActivitiesDurationReportProjection?.stop();
   }
 
@@ -77,13 +76,25 @@ class ActivitiesReportViewState extends State<ActivitiesReportView> {
 
   @override
   void initState() {
-    initialize(widget);
+    initialize(widget, WidgetsBinding.instance);
   }
 
   @override
   void dispose() {
     super.dispose();
-    destroy();
+    destroy(WidgetsBinding.instance);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // Re-draw UI when screen un-locks to update displayed durations.
+    setState(() {});
+  }
+
+  @override
+  void didUpdateWidget(ActivitiesReportView oldWidget) {
+    // Re-draw UI when this widget gets displayed to update displayed durations.
+    setState(() {});
   }
 
   Widget _build(BuildContext context, AsyncSnapshot<dynamic> reportSnapshot) {
